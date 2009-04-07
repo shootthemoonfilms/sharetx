@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+
+<!--
+/* ***** BEGIN LICENCE BLOCK *****
+ * Version: CePL 1.1
+ * 
+ * The contents of this file are subject to the Celtx Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.celtx.com/CePL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Celtx Script Manager.
+ * 
+ * The Initial Developer of the Original Code is Chad House and 4067479
+ * Canada Inc. t/a CELTX.
+ * 
+ * Portions created by Chad House are Copyright (C) 2000-2004 Chad House,
+ * parts created by Celtx are Copyright (C) 4067479 Canada Inc. All Rights
+ * Reserved.
+ * 
+ * Contributor(s):
+ *
+ ***** END LICENCE BLOCK ***** */
+-->
+
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="projectprops"
+        title="&projectProperties.label;"
+        buttons="accept,cancel"
+        onload="loaded()"
+        ondialogaccept="return accepted()"
+        ondialogcancel="return canceled()">
+
+
+<script type="application/x-javascript"
+        src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/macWindowMenu.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/printUtils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/util.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/domutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/guiutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfmodel.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/itemtree.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/projectManager.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/project.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/mediamgr.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/app.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/projectprops.js"/>
+
+  <stringbundleset id="languageSet">
+    <stringbundle id="bundleRegions"
+                  src="chrome://global/locale/regionNames.properties"/>
+    <stringbundle id="bundleLanguages"
+                  src="chrome://global/locale/languageNames.properties"/>
+    <stringbundle id="bundlePreferences"
+                  src="chrome://celtx/locale/celtx.properties"/>
+    <stringbundle id="bundleAccepted"
+                  src="resource://gre/res/language.properties"/>
+  </stringbundleset>
+
+  <hbox align="center">
+    <image src="chrome://celtx/skin/celtx.png"
+           ondblclick="revealProjectFolder()"/>
+    <vbox flex="1">
+      <label id="title-label"
+             class="header"/>
+      <hbox>
+        <label value="&modified.label;&colon;"/>
+        <label id="modified-label"
+               flex="1"/>
+      </hbox>
+      <label class="text-link"
+             value="&openProjectFolder.label;"
+             onclick="revealProjectFolder();"/>
+    </vbox>
+  </hbox>
+  <separator class="groove"/>
+  <tabbox flex="1">
+    <tabs>
+      <tab label="&properties.label;"/>
+      <tab label="&image.label;"/>
+      <tab label="&video.label;"/>
+      <tab label="&sharing.label;"/>
+    </tabs>
+    <tabpanels flex="1">
+      <!-- Properties panel -->
+      <vbox flex="1">
+        <hbox align="center">
+          <label value="&title.label;"/>
+          <textbox id="title-textbox"
+                   flex="1"/>
+        </hbox>
+        <hbox align="center">
+          <label value="&tagline.label;"/>
+          <textbox id="tagline-textbox"
+                   flex="1"/>
+        </hbox>
+        <label value="&description.label;"/>
+        <textbox id="desc-textbox"
+                 multiline="true"
+                 rows="5"
+                 flex="1"/>
+        <hbox align="center">
+          <label value="&language.label;"/>
+          <menulist id="lang-menulist">
+            <menupopup/>
+          </menulist>
+        </hbox>
+      </vbox>
+      <!-- Image panel -->
+      <tabpanel flex="1"
+                orient="vertical">
+        <stack>
+          <vbox width="256" height="256" pack="center" align="center">
+            <description style="font-size: 24pt; color: silver;">
+              &noImageSelected.label;
+            </description>
+          </vbox>
+          <image id="proj-image"
+                 width="256"
+                 height="256"/>
+        </stack>
+        <hbox pack="end">
+          <button label="&clearCmd.label;"
+                  oncommand="clearProjectImage();"/>
+          <button label="&addCmd.label;"
+                  oncommand="pickProjectImage();"/>
+        </hbox>
+      </tabpanel>
+      <!-- Video panel -->
+      <tabpanel flex="1"
+                orient="vertical">
+        <label value="&enterEmbedTagPrompt.label;"/>
+        <textbox id="proj-embed"
+                 multiline="true"
+                 rows="8"/>
+      </tabpanel>
+      <!-- Sharing panel -->
+      <tabpanel flex="1">
+        <radiogroup id="mode-group">
+         <radio id="mode-public"
+                selected="true"
+                label="&publishDialog.publicLabel;"
+                oncommand="optionPublic()"/>
+         <radio id="mode-private"
+                label="&publishDialog.privateLabel;"
+                oncommand="optionPrivate()"/>
+         <hbox align="center">
+           <radio id="mode-shared"
+                  label="&publishDialog.sharedLabel;"
+                  oncommand="optionShared()"/>
+           <textbox id="shared-users" disabled="true"/>
+           <button id="userlist-button"
+                   label="&list.label;"
+                   disabled="true"
+                   oncommand="presentUserlist()"/>
+         </hbox>
+        </radiogroup>
+        <separator/>
+        <deck id="mode-desc-deck"
+              maxwidth="350">
+          <description>&publishDialog.publicDesc;</description>
+          <description>&publishDialog.privateDesc;</description>
+          <description>&publishDialog.sharedDesc;</description>
+        </deck>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+
+</dialog>
+

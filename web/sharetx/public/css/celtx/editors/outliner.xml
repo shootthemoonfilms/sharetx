@@ -1,0 +1,335 @@
+<?xml version="1.0"?>
+
+<!--
+/* ***** BEGIN LICENCE BLOCK *****
+ * Version: CePL 1.1
+ * 
+ * The contents of this file are subject to the Celtx Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.celtx.com/CePL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Celtx Script Manager.
+ * 
+ * The Initial Developer of the Original Code is Chad House and 4067479
+ * Canada Inc. t/a CELTX.
+ * 
+ * Portions created by Chad House are Copyright (C) 2000-2004 Chad House,
+ * parts created by Celtx are Copyright (C) 4067479 Canada Inc. All Rights
+ * Reserved.
+ * 
+ * Contributor(s):
+ *
+ ***** END LICENCE BLOCK ***** */
+-->
+
+
+<!DOCTYPE bindings [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          id="outlinerbindings">
+
+  <!-- Outline Editor -->
+  <binding id="outliner">
+    <content>
+      <xul:editor anonid="editor"
+                  editortype="html"
+                  xbl:inherits="type,context"
+                  style="background-color: white;"
+                  flex="1"/>
+    </content>
+
+    <implementation>
+      <property name="editorElement" readonly="true">
+        <getter>
+          return document.getAnonymousNodes(this)[0];
+        </getter>
+      </property>
+      <property name="editor" readonly="true">
+        <getter>
+          return this.editorElement.getHTMLEditor(
+            this.editorElement.contentWindow);
+        </getter>
+      </property>
+      <property name="contentDocument" readonly="true">
+        <getter>
+          return this.editorElement.contentDocument;
+        </getter>
+      </property>
+      <property name="contentWindow" readonly="true">
+        <getter>
+          return this.editorElement.contentWindow;
+        </getter>
+      </property>
+      <property name="selection" readonly="true">
+        <getter>
+          return this.editor.selection;
+        </getter>
+      </property>
+
+      <method name="load">
+        <parameter name="url"/>
+        <body>
+          <![CDATA[
+          var e = this.editorElement;
+          var observer = {
+            editor: this,
+            observe: function (subject, topic, data) {
+              var eventName = null;
+              switch (topic) {
+                case "obs_documentCreated":
+                  eventName = "scriptload";
+                  break;
+                case "cmd_bold":
+                  eventName = "formatchanged";
+                  break;
+                default:
+                  return;
+              }
+              var event = document.createEvent("HTMLEvents");
+              event.initEvent(eventName, true, false);
+              this.editor.dispatchEvent(event);
+            }
+          };
+          e.commandManager.addCommandObserver(observer,
+            "obs_documentCreated");
+          e.commandManager.addCommandObserver(observer, "cmd_bold");
+          e.setAttribute("src", url);
+          ]]>
+        </body>
+      </method>
+
+      <method name="debugDump">
+        <body>
+          try {
+            var str = this.editor.outputToString("text/html", 2);
+            dump("\n==================================================\n" +
+                 str +
+                 "\n==================================================\n");
+          } catch (ex) { dump("dump: " + ex + "\n"); }
+        </body>
+      </method>
+
+      <method name="toggleOrderedList">
+        <body>
+        <![CDATA[
+          var mixed = { value: false };
+          var ol = { value: false };
+          var ul = { value: false };
+          var dl = { value: false };
+          this.editor.getListState(mixed, ol, ul, dl);
+          if (ol.value && ! mixed.value)
+            this.editor.removeList("ol");
+          else
+            this.editor.makeOrChangeList("ol", false, "");
+        ]]>
+        </body>
+      </method>
+
+      <method name="toggleUnorderedList">
+        <body>
+        <![CDATA[
+          var mixed = { value: false };
+          var ol = { value: false };
+          var ul = { value: false };
+          var dl = { value: false };
+          this.editor.getListState(mixed, ol, ul, dl);
+          if (ul.value && ! mixed.value)
+            this.editor.removeList("ul");
+          else
+            this.editor.makeOrChangeList("ul", false, "");
+        ]]>
+        </body>
+      </method>
+
+      <method name="increaseIndentLevel">
+        <body>
+          <![CDATA[
+          var mixed = { value: false };
+          var ol = { value: false };
+          var ul = { value: false };
+          var dl = { value: false };
+          this.editor.getListState(mixed, ol, ul, dl);
+          if (mixed.value || ol.value || ul.value || dl.value)
+            this.editor.indent("indent");
+          else
+            this.editor.makeOrChangeList("ul", false, "");
+          ]]>
+        </body>
+      </method>
+
+      <method name="decreaseIndentLevel">
+        <body>
+          <![CDATA[
+          var mixed = { value: false };
+          var ol = { value: false };
+          var ul = { value: false };
+          var dl = { value: false };
+          this.editor.getListState(mixed, ol, ul, dl);
+          if (mixed.value || ol.value || ul.value || dl.value)
+            this.editor.indent("outdent");
+          ]]>
+        </body>
+      </method>
+
+      <method name="setAlignment">
+        <parameter name="alignment"/>
+        <body>
+          this.editor.align(alignment);
+        </body>
+      </method>
+
+      <method name="setColour">
+        <parameter name="colour"/>
+        <body>
+        <![CDATA[
+          this.editor.setCSSInlineProperty(getAtom("font"), "color", colour);
+        ]]>
+        </body>
+      </method>
+
+      <method name="toggleStyle">
+        <parameter name="style"/>
+        <body>
+        <![CDATA[
+          // Adapted from ComposerCommands.js
+          try {
+            var cmdParams = Components.classes[
+              "@mozilla.org/embedcomp/command-params;1"]
+              .createInstance(Components.interfaces.nsICommandParams);
+            var dispatcher = document.commandDispatcher;
+            var cmd = 'cmd_' + style;
+            var ctl = dispatcher.getControllerForCommand(cmd);
+            if (ctl && ctl.isCommandEnabled(cmd)) {
+              if (ctl instanceof Components.interfaces.nsICommandController) {
+                ctl.doCommandWithParams(cmd, cmdParams);
+                if (cmdParams)
+                  ctl.getCommandStateWithParams(cmd, cmdParams);
+              }
+              else
+                ctl.doCommand(cmd);
+            }
+            else {
+              if (ctl)
+                dump("*** toggleStyle: " + cmd + " not enabled\n");
+              else
+                dump("*** toggleStyle: No controller for " + cmd + "\n");
+            }
+          }
+          catch (ex) {
+            dump("*** toggleStyle: " + ex + "\n");
+          }
+        ]]>
+        </body>
+      </method>
+
+
+      <!-- Keep these methods synchronised with the bindings.xml editor -->
+      <method name="setSelectionCase">
+        <parameter name="selection"/>
+        <parameter name="toUpper"/>
+        <body>
+        <![CDATA[
+          var ed = this.editor;
+          var editorsel = ed.selection;
+          if (editorsel.isCollapsed)
+            return;
+
+          var textVisitor = {
+            range: null,
+            toUpper: toUpper,
+            visitLeaf: function (leaf) {
+              const TEXT_NODE = Components.interfaces.nsIDOMNode.TEXT_NODE;
+              if (leaf.nodeType != TEXT_NODE) {
+                return;
+              }
+              var str = leaf.nodeValue;
+              var start = 0;
+              var end = str.length;
+              if (leaf == this.range.startContainer)
+                start = this.range.startOffset;
+              if (leaf == this.range.endContainer)
+                end = this.range.endOffset;
+              var head = str.substring(0, start);
+              var mid = str.substring(start, end);
+              var tail = str.substring(end, str.length);
+              if (this.toUpper)
+                leaf.nodeValue = head + mid.toUpperCase() + tail;
+              else
+                leaf.nodeValue = head + mid.toLowerCase() + tail;
+            }
+          };
+
+          ed.setShouldTxnSetSelection(false);
+          var walker = new RangeLeafWalker(textVisitor);
+          var ranges = editorsel.rangeCount;
+          for (var i = 0; i < ranges; i++) {
+            textVisitor.range = editorsel.getRangeAt(i);
+            var startContainer = textVisitor.range.startContainer;
+            var startOffset = textVisitor.range.startOffset;
+            var endContainer = textVisitor.range.endContainer;
+            var endOffset = textVisitor.range.endOffset;
+            editorsel.removeRange(textVisitor.range);
+            try {
+              walker.traverse(textVisitor.range);
+            }
+            catch (ex) {
+              dump("*** setSelectionCase: " + ex + "\n");
+            }
+            var range = this.contentDocument.createRange();
+            range.setStart(startContainer, startOffset);
+            range.setEnd(endContainer, endOffset);
+            editorsel.addRange(range);
+          }
+          ed.setShouldTxnSetSelection(true);
+        ]]>
+        </body>
+      </method>
+
+
+      <method name="setSelectionToLowerCase">
+        <body>
+          var tx = new DOMModificationTransaction(this.contentDocument);
+          tx.beginRecording();
+          this.setSelectionCase(this.editor.selection, false);
+          tx.endRecording();
+          this.editor.transactionManager.doTransaction(tx);
+        </body>
+      </method>
+
+
+      <method name="setSelectionToUpperCase">
+        <body>
+          var tx = new DOMModificationTransaction(this.contentDocument);
+          tx.beginRecording();
+          this.setSelectionCase(this.editor.selection, true);
+          tx.endRecording();
+          this.editor.transactionManager.doTransaction(tx);
+        </body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="keypress" keycode="VK_TAB">
+        event.preventDefault();
+        this.increaseIndentLevel();
+      </handler>
+      <handler event="keypress" keycode="VK_TAB" modifiers="shift">
+        event.preventDefault();
+        this.decreaseIndentLevel();
+      </handler>
+    </handlers>
+  </binding>
+
+</bindings>
+

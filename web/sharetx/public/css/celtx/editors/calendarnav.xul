@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/skin/calendar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/skin/widgets/minimonth.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/content/widgets/calendar-widget-bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/content/calendar-view-bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/skin/calendar-views.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/skin/calendar-toolbar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/content/calendar-bindings.css" type="text/css"?>
+
+<?xul-overlay href="chrome://calendar/content/calendar-unifinder-todo.xul"?>
+
+<!DOCTYPE window
+[
+  <!ENTITY % dtd1 SYSTEM "chrome://calendar/locale/global.dtd" > %dtd1;
+  <!ENTITY % dtd2 SYSTEM "chrome://calendar/locale/calendar.dtd" > %dtd2;
+  <!ENTITY % calendarMenuOverlayDTD SYSTEM "chrome://calendar/locale/menuOverlay.dtd" > %calendarMenuOverlayDTD;
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" > %brandDTD;
+  <!ENTITY % globalRegionDTD SYSTEM "chrome://global-region/locale/region.dtd"> %globalRegionDTD;
+  <!ENTITY % calendar-event-dialogDTD SYSTEM "chrome://calendar/locale/calendar-event-dialog.dtd">
+  %calendar-event-dialogDTD;
+
+
+<!ENTITY % baseMenuOverlayDTD SYSTEM
+          "chrome://celtxapp/locale/baseMenuOverlay.dtd">
+%baseMenuOverlayDTD;
+<!ENTITY % browserDTD SYSTEM "chrome://celtxapp/locale/browser.dtd" >
+%browserDTD;
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="loaded();">
+
+
+<script type="application/x-javascript"
+        src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/macWindowMenu.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/printUtils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/util.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/domutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/guiutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfmodel.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/itemtree.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/projectManager.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/project.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/mediamgr.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/app.js"/>
+  <script type="application/x-javascript"
+          src="chrome://calendar/content/calUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://calendar/content/mouseoverPreviews.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/editors/calendarnav.js"/>
+
+  <tooltip id="taskTreeTooltip"
+           onpopupshowing="return onMouseOverTaskTree( this, event )"
+           noautohide="true"/>
+
+  <vbox id="todo-tab-panel" flex="1"/>
+
+</window>

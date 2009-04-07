@@ -1,0 +1,484 @@
+
+/********************************************************
+ *                     general
+ ********************************************************/
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+a {
+    color: #888888;
+}
+
+a:hover {
+    color: #ff8800;
+}
+
+h1 {
+    border-bottom: 2px solid #999999;
+    font-size: x-large;
+    padding: 5px;
+}
+
+h1:first-child {
+    margin-top: 0;
+}
+
+/********************************************************
+ *                        index
+ ********************************************************/
+
+body.index {
+    text-align: center;
+}
+
+#logo {
+    margin: 50px;
+}
+
+#logo img {
+    border: 0;
+}
+
+#access {
+    margin: 50px auto;
+    background-color: #ffeecc;
+    padding: 1em;
+    width: 400px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+#access label {
+    display: block;
+    float: left;
+    clear: left;
+    padding: 10px;
+    width: 100px;
+    text-align: right;
+}
+
+#access label[for=remember] {
+    display: inline;
+    float: none;
+}
+
+#access input[type=text],
+#access input[type=password] {
+    display: block;
+    margin: 10px 0;
+    border: 3px solid #ffcc99;
+    width: 250px;
+    text-align: left;
+    font-size: large;
+}
+
+#access input[name=remember] {
+    width: auto;
+    margin: 0;
+}
+
+#access button {
+    display: block;
+    margin: 10px 0 20px 0;
+    margin-left: 120px;
+    background-color: #ffcc99;
+    border: 3px solid #ffcc99;
+    font-size: medium;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+/********************************************************
+ *                    toolbar
+ ********************************************************/
+
+#toolbar {
+    height: 60px;
+    padding: 0;
+    border-bottom: 1px solid #bbbbbb;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    background-color: #eeeeee;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#toolbar a {
+    float: right;
+    padding: 15px;
+}
+
+#toolbar a img {
+    border: 0;
+    height: 30px;
+}
+
+#toolbar button span {
+    clear: none;
+}
+
+#toolbar button {
+    xwidth: 60px;
+    height: 60px;
+    border: 0;
+    padding-bottom: 5px;
+    background-color: transparent;
+}
+
+#toolbar button[disabled=disabled] img {
+    opacity: 0.25;
+}
+
+#toolbar .separator {
+    border-left: 1px solid #999999;
+    border-right: 1px solid #F8F8F8;
+    display: inline;
+    height: 30px;
+    padding: 20px 0 5px;
+    vertical-align: super;
+}
+
+/********************************************************
+ *                    workarea
+ ********************************************************/
+
+#workarea {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 60px 0 0 0;
+}
+
+#left_sidebar,
+#right_sidebar {
+    float: left;
+    width: 200px;
+    height: 100%;
+    background-color: white;
+    overflow: auto;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#right_sidebar {
+    float: right;
+}
+
+#left_sidebar_toggle,
+#right_sidebar_toggle {
+    float: left;
+    width: 7px;
+    height: 100%;
+    background-color: #cccccc;
+    border-right: 1px solid #999999;
+    cursor: pointer;
+}
+
+#left_sidebar_toggle a,
+#right_sidebar_toggle a {
+    display: block;
+    text-decoration: none;
+    height: 100%;
+}
+
+#right_sidebar_toggle {
+    float: right;
+    border-left: 1px solid #999999;
+    border-right: 0;
+}
+
+/********************************************************
+ *                     file tree
+ ********************************************************/
+
+#left_sidebar {
+    font-size: small;
+    padding: 5px;
+}
+
+#left_sidebar .projectTitle {
+    background-repeat: no-repeat;
+    background-image: url(../img/celtx-icon-16x16.png);
+    padding-top: 3px;
+    padding-left: 20px;
+    cursor: default;
+}
+
+#left_sidebar ul {
+    margin: 0;
+    padding-left: 0;
+}
+
+#left_sidebar ul li ul {
+    padding-left: 0;
+}
+
+#left_sidebar ul li {
+    list-style: none;
+    cursor: default;
+    padding-left: 20px;
+}
+
+#left_sidebar ul li a {
+    background-image: url(../img/icons/default.png);
+}
+
+#left_sidebar ul li a.folder {
+    background-image: url(../img/icons/folder.png);
+}
+
+/********************************************************
+ *                     project info
+ ********************************************************/
+
+#right_sidebar {
+    font-size: small;
+    padding: 0 10px;
+}
+
+#right_sidebar dl {
+}
+
+#right_sidebar dl dt {
+    color: #999999;
+    font-style: italic;
+}
+
+#right_sidebar dl dd {
+    margin: 0 0 10px 25px;
+}
+
+/********************************************************
+ *                      tabs
+ ********************************************************/
+
+#center {
+    height: 100%;
+    width: 100%;
+}
+
+#center_tabs {
+    background: #999999;
+    overflow: auto;
+    padding: 0 5px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#center_tabs div {
+    display: inline-table;
+    padding: 5px 7px;
+    margin: 3px 5px 0 0;
+    background: #cccccc;
+    font-size: small;
+    cursor: default;
+    -moz-border-radius: 5px 5px 0 0;
+    -webkit-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#center_tabs div:hover {
+    background: #dddddd;
+}
+
+#center_tabs div.active {
+    background: #eeeeee;
+}
+
+#center_tabs div.active:hover {
+    background: #f8f8f8;
+}
+
+#center_tabs div a {
+    font-size: small;
+    text-decoration: none;
+    margin-left: 10px; 
+}
+
+#center_tabs_content {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    border-bottom: 26px solid white;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#center_tabs_content div {
+    height: 100%;
+    padding: 10px;
+    overflow: auto;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#center_tabs_content iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/********************************************************
+ *                      dialogs
+ ********************************************************/
+
+.dialog {
+    font-size: small;
+}
+
+.dialog label {
+    display: block;
+    float: left;
+    clear: left;
+    padding: 3px;
+    width: 100px;
+    text-align: right;
+}
+
+.dialog input[type=text],
+.dialog input[type=password],
+.dialog input[type=file] {
+    display: block;
+    margin: 10px 0;
+    width: 250px;
+    text-align: left;
+}
+
+.dialog button {
+    display: block;
+    margin: 10px 0;
+    margin-left: 105px;
+}
+
+/********************************************************
+ *                        icons
+ ********************************************************/
+
+.icon {
+    border-collapse: separate;
+    background-repeat: no-repeat;
+    font-size: small;
+    cursor: default;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+.icon:hover {
+    background-color: #eeeeee;
+    color: black;
+}
+
+.icon:focus {
+    background-color: #99ccff;
+    outline: none;
+}
+
+.icon:focus:hover {
+    background-color: #aaddff;
+}
+
+.icon.large {
+    display: inline-table;
+    background-image: url(../img/celtx-icon-48x48.png);
+    background-position: 15px 5px;
+    width: 68px;
+    padding: 60px 5px 5px 5px;
+    text-align: center;
+    margin: 5px;
+}
+
+.icon.small {
+    display: block;
+    background-image: url(../img/celtx-icon-24x24.png);
+    height: 20px;
+    width: inherit;
+    padding-top: 5px;
+    padding-left: 30px;
+}
+
+.icon.smallest {
+    display: block;
+    background-image: url(../img/celtx-icon-16x16.png);
+    height: 15px;
+    width: inherit;
+    padding-top: 3px;
+    padding-left: 20px;
+}
+
+/********************************************************
+ *                        history
+ ********************************************************/
+
+table.zebra {
+    border-collapse: collapse;
+    border: 1px solid #aaaaaa;
+    width: 100%;
+}
+
+table.zebra th,
+table.zebra td {
+    padding: 8px;
+    font-size: small;
+    text-align: left;
+}
+
+table.zebra thead tr {
+    background: #dddddd;
+}
+
+table.zebra tfoot th,
+table.zebra tfoot td {
+    text-align: left;
+}
+
+table.zebra tbody th,
+table.zebra tbody td {
+    border: 1px dashed #cccccc;
+    vertical-align: top;
+    text-align: left;
+}
+
+table.zebra tbody tr:nth-child(odd) {
+    background: #f0f0f0;
+}
+
+table.zebra tbody tr:hover,
+table.zebra tbody tr:hover th {
+    background: #ccddee;
+}
+
+/********************************************************
+ *               prototype window fixes
+ ********************************************************/
+
+#overlay_modal {
+    background-color: black;
+}
+
+.mac_os_x_buttons {
+    margin-top: 20px;
+    text-align: center;
+}

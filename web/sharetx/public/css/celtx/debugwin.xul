@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/* ***** BEGIN LICENCE BLOCK *****
+ * Version: CePL 1.1
+ * 
+ * The contents of this file are subject to the Celtx Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.celtx.com/CePL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Celtx Script Manager.
+ * 
+ * The Initial Developer of the Original Code is 4067479
+ * Canada Inc. t/a CELTX.
+ * 
+ * Portions created by Celtx are Copyright (C) 4067479 Canada Inc.
+ * All Rights Reserved.
+ * 
+ * Contributor(s):
+ *
+ ***** END LICENCE BLOCK ***** */
+-->
+
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+
+<!DOCTYPE window [
+
+<!ENTITY % baseMenuOverlayDTD SYSTEM
+          "chrome://celtxapp/locale/baseMenuOverlay.dtd">
+%baseMenuOverlayDTD;
+<!ENTITY % browserDTD SYSTEM "chrome://celtxapp/locale/browser.dtd" >
+%browserDTD;
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="Testing Tools"
+        width="540"
+        height="320"
+        onload="loaded()"
+        onclose="return tryToClose();">
+
+
+  <broadcaster id="toolbar-broadcaster" mode="none"/>
+
+  <commandset id="fileCommandSet">
+    <command id="cmd-new-project"
+             oncommand="goDoCommand('cmd-new-project')"/>
+    <command id="cmd-download-project"
+             oncommand="goDoCommand('cmd-download-project')"/>
+    <command id="cmd-open-project"
+             oncommand="goDoCommand('cmd-open-project')"/>
+    <command id="cmd-open-studio"
+             oncommand="goDoCommand('cmd-open-studio')"/>
+    <command id="cmd-open-pc"
+             oncommand="goDoCommand('cmd-open-pc')"/>
+    <command id="cmd-copy-project"
+             disabled="true"
+             oncommand="goDoCommand('cmd-copy-project')"/>
+    <command id="cmd-save-project"
+             disabled="true"
+             oncommand="goDoCommand('cmd-save-project')"/>
+    <command id="cmd-save-project-as"
+             disabled="true"
+             oncommand="goDoCommand('cmd-save-project-as')"/>
+    <command id="cmd-save-project-template"
+             disabled="true"
+             oncommand="goDoCommand('cmd-save-project-template')"/>
+    <command id="cmd-close"
+             oncommand="goDoCommand('cmd-close')"/>
+    <command id="cmd-close-window"
+             oncommand="goDoCommand('cmd-close-window')"/>
+    <command id="cmd-page-setup"
+             disabled="true"
+             oncommand="goDoCommand('cmd-page-setup');"/>
+    <command id="cmd-print-preview"
+             disabled="true"
+             oncommand="goDoCommand('cmd-print-preview')"/>
+    <command id="cmd-print"
+             disabled="true"
+             oncommand="goDoCommand('cmd-print')"/>
+    <command id="cmd-quit"
+             oncommand="goQuitApplication()"/>
+  </commandset>
+
+  <keyset id="fileMenuKeyset">
+    <key id="key-new-project"
+         key="&newNavigatorCmd.key;"
+         command="cmd-new-project"
+         modifiers="accel"/>
+    <key id="key-open-project"
+         key="&openFileCmd.commandkey;"
+         command="cmd-open-project"
+         modifiers="accel"/>
+    <key id="key-save-project-as"
+         key="&savePageCmd.commandkey;"
+         command="cmd-save-project-as"
+         modifiers="accel,shift"/>
+    <key id="key-save-project"
+         key="&savePageCmd.commandkey;"
+         command="cmd-save-project"
+         modifiers="accel"/>
+    <key id="key-close"
+         key="&closeCmd.key;"
+         command="cmd-close"
+         modifiers="accel"/>
+    <key id="key-close-window"
+         key="&closeCmd.key;"
+         command="cmd-close-window"
+         modifiers="accel,shift"/>
+    <key id="key-print"
+         key="&printCmd.commandkey;"
+         command="cmd-print"
+         modifiers="accel"/>
+    <key id="key_quitApplication"
+          key="&quitApplicationCmdMac.key;"
+          command="cmd-quit"
+          modifiers="accel"/>
+  </keyset>
+
+  <commandset id="globalEditCommandSet"
+              commandupdater="true"
+              events="focus"
+              oncommandupdate="goUpdateGlobalEditMenuItems()"/>
+  <commandset id="selectEditCommandSet"
+              commandupdater="true"
+              events="select"
+              oncommandupdate="goUpdateSelectEditMenuItems()"/>
+  <commandset id="undoEditCommandSet"
+              commandupdater="true"
+              events="undo"
+              oncommandupdate="goUpdateUndoEditMenuItems()"/>
+  <commandset id="pasteCommandSet"
+              commandupdater="true"
+              events="clipboard"
+              oncommandupdate="goUpdatePasteMenuItems()"/>
+
+  <commandset id="editCommandSet">
+    <command id="cmd_undo" 
+             oncommand="goDoCommand('cmd_undo')"
+             disabled="true"/>
+    <command id="cmd_redo" 
+             oncommand="goDoCommand('cmd_redo')"
+             disabled="true"/>
+    <command id="cmd_cut" 
+             oncommand="goDoCommand('cmd_cut')"
+             disabled="true"/>
+    <command id="cmd_copy" 
+             oncommand="goDoCommand('cmd_copy')"
+             disabled="true"/>
+    <command id="cmd_paste" 
+             oncommand="goDoCommand('cmd_paste')"
+             disabled="true"/>
+    <command id="cmd_delete"
+             oncommand="goDoCommand('cmd_delete')"
+             valueDefault="&deleteCmd.label;"
+             disabled="true"/>
+    <command id="cmd_selectAll"
+             oncommand="goDoCommand('cmd_selectAll')"
+             disabled="true"/>
+    <command id="cmd-find"
+             disabled="true"
+             oncommand="goDoCommand('cmd-find')"/>
+    <command id="cmd-replace"
+             disabled="true"
+             oncommand="goDoCommand('cmd-replace')"/>
+    <command id="cmd-find-again"
+             disabled="true"
+             oncommand="goDoCommand('cmd-find-again')"/>
+    <command id="cmd-find-previous"
+             disabled="true"
+             oncommand="goDoCommand('cmd-find-previous')"/>
+  </commandset>
+
+  <keyset id="editMenuKeySet">
+    <key id="key_undo"
+         key="&undoCmd.key;"
+         modifiers="accel"/>
+    <key id="key_redo"
+         key="&undoCmd.key;"
+         modifiers="accel,shift"/>
+    <key id="key_cut"
+         key="&cutCmd.key;"
+         modifiers="accel"/>
+    <key id="key_copy"
+         key="&copyCmd.key;"
+         modifiers="accel"/>
+    <key id="key_paste"
+         key="&pasteCmd.key;"
+         modifiers="accel"/>
+    <key id="key_delete"
+         keycode="VK_DELETE"
+         command="cmd_delete"/>
+    <key id="key_selectAll"
+         key="&selectAllCmd.key;"
+         modifiers="accel"/>
+    <key id="key_find"
+         key="&findOnCmd.commandkey;"
+         command="cmd-find"
+         modifiers="accel"/>
+    <key id="key_findAgain"
+         key="&findAgainCmd.commandkey;"
+         command="cmd-find-again"
+         modifiers="accel"/>
+    <key id="key_findPrevious"
+         key="&findAgainCmd.commandkey;"
+         command="cmd-find-previous"
+         modifiers="accel,shift"/>
+    <key keycode="&findAgainCmd.commandkey2;"
+         command="cmd-find-again"/>
+    <key keycode="&findAgainCmd.commandkey2;"
+         command="cmd-find-previous"
+         modifiers="shift"/>
+  </keyset>
+
+  <commandset id="toolsCommandSet">
+    <command id="cmd-check-spelling"
+             oncommand="goDoCommand('cmd-check-spelling')"
+             disabled="true"/>
+    <command id="cmd-toggle-inline-spelling"
+             oncommand="goDoCommand('cmd-toggle-inline-spelling')"
+             disabled="true"/>
+  </commandset>
+
+  <commandset id="helpCommandSet">
+    <command id="cmd-about-celtx"
+             oncommand="goDoCommand('cmd-about-celtx')"/>
+    <command id="cmd-help-support"
+             oncommand="goDoCommand('cmd-help-support')"/>
+    <command id="cmd-celtx-wiki"
+             oncommand="goDoCommand('cmd-celtx-wiki')"/>
+    <command id="cmd-video-tutorial"
+             oncommand="goDoCommand('cmd-video-tutorial')"/>
+    <command id="cmd-help-report-bug"
+             oncommand="goDoCommand('cmd-help-report-bug')"/>
+    <command id="cmd-help-account"
+             oncommand="goDoCommand('cmd-help-account')"/>
+  </commandset>
+
+
+  <keyset id="baseMenuKeyset">
+    <key id="key_openHelpMacFrontend"
+         oncommand="openHelpLink('firefox-help');"
+         key="&openHelpMac.frontendCommandkey;"
+         modifiers="&openHelpMac.frontendModifiers;"/>
+<!-- These are used to build the Application menu under Cocoa widgets -->
+    <key id="key_preferencesCmdMac"
+         key="&preferencesCmdMac.commandkey;"
+         modifiers="&preferencesCmdMac.modifiers;"/>
+    <key id="key_hideThisAppCmdMac"
+         key="&hideThisAppCmdMac.commandkey;"
+         modifiers="&hideThisAppCmdMac.modifiers;"/>
+    <key id="key_hideOtherAppsCmdMac"
+         key="&hideOtherAppsCmdMac.commandkey;"
+         modifiers="&hideOtherAppsCmdMac.modifiers;"/>
+  </keyset>
+
+  <commandset id="windowMenuCommandSet">
+    <command id="minimizeWindow"
+             label="&minimizeWindow.label;"
+             oncommand="window.minimize();" />
+    <command id="zoomWindow"
+             label="&zoomWindow.label;"
+             oncommand="zoomWindow();" />
+  </commandset>
+  <keyset id="windowMenuKeyset">
+    <key id="key_minimizeWindow"
+         command="minimizeWindow"
+         key="&minimizeWindow.key;"
+         modifiers="accel"/>
+  </keyset>
+
+
+<script type="application/x-javascript"
+        src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/macWindowMenu.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/printUtils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/util.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/domutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/guiutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfmodel.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/itemtree.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/projectManager.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/project.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/mediamgr.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/app.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/json2.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/editors/scriptscene.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/dataexport.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/debugwin.js"/>
+
+  <toolbar type="menubar" id="toolbar-menubar" class="chromeclass-menubar">
+
+<menubar id="main-menubar" statusbar="statusbar-display"
+         style="border:0px;padding:0px;margin:0px;-moz-appearance:none">
+    <menu id="file-menu"
+          label="&fileMenu.label;"
+          accesskey="&fileMenu.accesskey;">
+      <menupopup id="menu_FilePopup"
+                 onpopupshowing="goUpdateCommand('cmd-page-setup');
+                                 goUpdateCommand('cmd-print');
+                                 goUpdateCommand('cmd-print-preview');">
+        <menuitem id="menu-new-project"
+                  label="&newProjectCmd.label;"
+                  key="key-new-project"
+                  command="cmd-new-project"/>
+        <menuitem id="menu-open-project"
+                  label="&openProjectCmd.label;"
+                  key="key-open-project"
+                  command="cmd-open-project"/>
+        <menu label="&openRecentCmd.label;">
+          <menupopup id="menu-recent-projects">
+            <menuseparator id="recent-projects-menusep"
+                           collapsed="true"/>
+          </menupopup>
+        </menu>
+        <menuitem id="menu-save-project"
+                  label="&saveProjectCmd.label;"
+                  key="key-save-project"
+                  accel="&savePageCmd.commandkey;"
+                  command="cmd-save-project"/>
+        <menuitem id="menu-save-project-as"
+                  label="&saveProjectAsCmd.label;"
+                  key="key-save-project-as"
+                  accel="&savePageCmd.accesskey;"
+                  command="cmd-save-project-as"/>
+        <menuitem id="menu-save-as-template"
+                  label="&createTemplate.label;&ellipsis;"
+                  command="cmd-save-project-template"/>
+        <menuitem id="menu_close"
+                  label="&closeCmd.label;"
+                  key="key-close"
+                  accesskey="&closeCmd.accesskey;"
+                  command="cmd-close"/>
+        <menuitem id="menu_closeWindow"
+                  hidden="true"
+                  command="cmd-close-window"
+                  key="key-close-window"
+                  label="&closeWindow.label;"/>
+        <menuseparator/>
+        <menuitem label="&openFromStudio.label;&ellipsis;"
+                  command="cmd-open-studio"/>
+        <menuitem label="&saveToStudio.label;&ellipsis;"
+                  oncommand="cmdSaveProjectToServer();"/>
+        <menuseparator/>
+        <menuitem id="menu-add-item"
+                  label="&addItem.label;"
+                  disabled="true"
+                  command="cmd-add-document"/>
+        <menuitem id="menu-add-folder"
+                  label="&addFolder.label;"
+                  disabled="true"
+                  command="cmd-add-folder"/>
+        <menuitem id="menu-delete-item"
+                  label="&deleteItem.label;"
+                  disabled="true"
+                  command="cmd-remove-document"/>
+        <menuseparator/>
+        <menuitem label="&printSetupCmd.label;"
+                  accesskey="&printSetupCmd.accesskey;"
+                  command="cmd-page-setup"/>
+        <menuitem label="&printCmd.label;"
+                  accesskey="&printCmd.accesskey;"
+                  key="key-print"
+                  command="cmd-print"/>
+        <menuseparator/>
+        <menuitem id="menu-reveal-project"
+                  label="&showProjectFileCmd.label;"
+                  disabled="true"
+                  command="cmd-reveal-project"/>
+        <menuitem id="menu_FileQuitItem" 
+                  label="&quitApplicationCmd.label;"
+                  accesskey="&quitApplicationCmd.accesskey;"
+                  key="key_quitApplication"
+                  command="cmd-quit"/>
+      </menupopup>
+    </menu>
+
+    <menu id="edit-menu"
+          label="&editMenu.label;"
+          accesskey="&editMenu.accesskey;">
+      <menupopup id="menu_EditPopup">
+        <menuitem label="&undoCmd.label;"
+                  key="key_undo"
+                  accesskey="&undoCmd.accesskey;"
+                  command="cmd_undo"/>
+        <menuitem label="&redoCmd.label;"
+                  key="key_redo"
+                  accesskey="&redoCmd.accesskey;"
+                  command="cmd_redo"/>
+        <menuseparator/>
+        <menuitem label="&cutCmd.label;"
+                  key="key_cut"
+                  accesskey="&cutCmd.accesskey;"
+                  command="cmd_cut"/>
+        <menuitem label="&copyCmd.label;"
+                  key="key_copy"
+                  accesskey="&copyCmd.accesskey;"
+                  command="cmd_copy"/>
+        <menuitem label="&pasteCmd.label;"
+                  key="key_paste"
+                  accesskey="&pasteCmd.accesskey;"
+                  command="cmd_paste"/>
+        <menuseparator/>
+        <menuitem label="&selectAllCmd.label;"
+                  key="key_selectAll"
+                  accesskey="&selectAllCmd.accesskey;"
+                  command="cmd_selectAll"/>
+        <menuseparator/>
+        <menuitem label="&findCmd.label;"
+                  accesskey="&findCmd.accesskey;"
+                  key="key_find"
+                  command="cmd-find"/>
+        <menuitem label="&replaceCmd.label;"
+                  command="cmd-replace"/>
+        <menuitem label="&findAgainCmd.label;"
+                  accesskey="&findAgainCmd.accesskey;"
+                  key="key_findAgain"
+                  command="cmd-find-again"/>
+        <menuitem label="&findPreviousCmd.label;"
+                  key="key_findPrevious"
+                  command="cmd-find-previous"/>
+        <menuitem id="menu_preferences"
+                  label="&preferencesCmdMac.label;"
+                  key="key_preferencesCmdMac"
+                  oncommand="openPreferences();"/>
+        <menuitem id="menu_mac_services"
+                  label="&servicesMenuMac.label;"/>
+        <menuitem id="menu_mac_hide_app"
+                  label="&hideThisAppCmdMac.label;"
+                  key="key_hideThisAppCmdMac"/>
+        <menuitem id="menu_mac_hide_others"
+                  label="&hideOtherAppsCmdMac.label;"
+                  key="key_hideOtherAppsCmdMac"/>
+        <menuitem id="menu_mac_show_all"
+                  label="&showAllAppsCmdMac.label;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="view-menu"
+          label="&viewMenu.label;"
+          accesskey="&viewMenu.accesskey;">
+      <menupopup id="menu_viewPopup">
+        <menu id="viewToolbarsMenu"
+              label="&viewToolbarsMenu.label;"
+              accesskey="&viewToolbarsMenu.accesskey;">
+          <menupopup>
+            <menuitem id="menu-toolbarmode-both"
+                      label="&iconsAndText.label;"
+                      value="both"
+                      type="radio"
+                      name="celtx:toolbarmode"
+                      oncommand="gApp.setToolbarMode(this.value)"/>
+            <menuitem id="menu-toolbarmode-icons"
+                      label="&icons.label;"
+                      value="icons"
+                      type="radio"
+                      name="celtx:toolbarmode"
+                      oncommand="gApp.setToolbarMode(this.value)"/>
+            <menuitem id="menu-toolbarmode-text"
+                      label="&text.label;"
+                      value="text"
+                      type="radio"
+                      name="celtx:toolbarmode"
+                      oncommand="gApp.setToolbarMode(this.value)"/>
+            <menuitem id="menu-toolbarmode-none"
+                      label="&none.label;"
+                      value="none"
+                      type="radio"
+                      name="celtx:toolbarmode"
+                      oncommand="gApp.setToolbarMode(this.value)"/>
+          </menupopup>
+        </menu>
+      </menupopup>
+    </menu>
+
+<!-- FIXME: On Leopard, this menu label isn't updated, so we're statically
+            setting it to Script, since that's the only editor with its
+            own menu. Set label back to "dontseeme" once the Leopard issue
+            is resolved. -->
+    <menu id="tool-specific-menu"
+          label="&script.label;"
+          hidden="true"/>
+
+    <menu id="tools-menu"
+          label="&toolsMenu.label;"
+          accesskey="&toolsMenu.accesskey;">
+      <menupopup id="menu_ToolsPopup">
+        <menuitem id="spell-check-menu"
+                  label="&spellCheckCmd.label;"
+                  command="cmd-check-spelling"/>
+        <menuitem id="toggle-inline-spellcheck-menu"
+                  label="&inlineSpellCheckCmd.label;"
+                  type="checkbox"
+                  command="cmd-toggle-inline-spelling"/>
+        <menuitem label="&toolbox.label;"
+                  oncommand="openExtensionsManager();"/>
+      </menupopup>
+    </menu>
+
+    <menu id="windowMenu"
+          label="&windowMenu.label;"
+          datasources="rdf:window-mediator" ref="NC:WindowMediatorRoot"
+          onpopupshowing="checkFocusedWindow();"
+          hidden="false">
+        <template>
+        <rule>
+            <menupopup>
+                <menuitem uri="rdf:*"
+                          label="rdf:http://home.netscape.com/NC-rdf#Name"
+                          type="radio"
+                          name="windowList"
+                          oncommand="ShowWindowFromResource(event.target)"/>
+            </menupopup>
+        </rule>
+        </template>
+        <menupopup id="windowPopup">
+            <menuitem command="minimizeWindow" key="key_minimizeWindow"/>
+            <menuitem command="zoomWindow"/>
+            <!-- decomment when "BringAllToFront" is implemented
+                <menuseparator/>
+                <menuitem label="&bringAllToFront.label;" disabled="true"/> -->
+            <menuseparator/>
+            <menuitem label="&splashScreen.label;"
+                      oncommand="showSplashWindow();"/>
+            <menuseparator id="sep-window-list"/>
+        </menupopup>
+    </menu>
+
+    <menu id="helpMenu"
+          label="&helpMenu.label;"
+          accesskey="&helpMenu.accesskey;">
+      <menupopup id="menu_HelpPopup">
+        <menuitem id="aboutName"
+                  accesskey="&aboutCmd.accesskey;"
+                  label="&aboutCmd.label;"
+                  hidden="true"
+                  command="cmd-about-celtx"/>
+        <menuitem label="&helpSupportCmd.label;"
+                  accesskey="&helpSupportCmd.accessKey;"
+                  command="cmd-help-support"/>
+        <menuitem label="&celtxWikiCmd.label;"
+                  command="cmd-celtx-wiki"/>
+        <menuitem label="&splash.projectCentral;"
+                  command="cmd-open-pc"/>
+        <menuitem label="&videoTutorialCmd.label;"
+                  command="cmd-video-tutorial"/>
+        <menuitem label="&helpReportBugCmd.label;"
+                  accesskey="&helpReportBugCmd.accessKey;"
+                  command="cmd-help-report-bug"/>
+        <menuseparator/>
+        <menuitem label="&celtxAccountCmd.label;"
+                  accesskey="&celtxAccountCmd.accessKey;"
+                  command="cmd-help-account"/>
+      </menupopup>
+    </menu>
+</menubar>
+  </toolbar>
+
+  <tabbox flex="1">
+    <tabs>
+      <tab label="Projects"/>
+      <tab label="Documents"/>
+      <tab label="Media"/>
+      <tab label="JSON"/>
+    </tabs>
+    <tabpanels flex="1">
+      <tabpanel flex="1"
+                orient="vertical">
+        <tree id="projectlist"
+              flex="1"
+              seltype="single"
+              onselect="projectSelected();">
+          <treecols>
+            <treecol label="Original Project"
+                     flex="1"/>
+            <treecol label="Cloned Project"
+                     flex="1"/>
+          </treecols>
+          <treechildren/>
+        </tree>
+        <hbox align="center"
+              pack="end">
+          <button id="cloneproject"
+                  label="Clone Project"
+                  oncommand="cloneProject();"
+                  disabled="true"/>
+          <button id="reloadproject"
+                  label="Refresh Project"
+                  oncommand="reloadProject();"
+                  disabled="true"/>
+        </hbox>
+      </tabpanel>
+      <tabpanel flex="1"
+                orient="vertical">
+        <label value="Open Tabs:"/>
+        <tree id="opentabslist"
+              flex="1"
+              rows="5"
+              seltype="single"
+              onselect="documentSelected();">
+          <treecols>
+            <treecol label="Original Document"
+                     flex="1"/>
+            <treecol label="Modified Document"
+                     flex="1"/>
+          </treecols>
+          <treechildren/>
+        </tree>
+        <hbox align="center"
+              pack="end">
+          <button id="lockdocumentbutton"
+                  label="Lock"
+                  disabled="true"/>
+          <button id="saveorigbutton"
+                  label="Save"
+                  disabled="true"
+                  oncommand="saveOriginalDocument();"/>
+          <button id="saveclonebutton"
+                  label="Save Clone"
+                  disabled="true"
+                  hidden="true"
+                  oncommand="saveClonedDocument();"/>
+          <button id="reloadbutton"
+                  label="Reload"
+                  hidden="true"
+                  disabled="true"/>
+        </hbox>
+      </tabpanel>
+      <tabpanel flex="1"
+                orient="vertical">
+        <label value="Unassociated Media Files:"/>
+        <listbox id="medialist"
+                 flex="1"
+                 seltype="multiple"
+                 onselect="mediaFilesSelected();"/>
+        <hbox align="center"
+              pack="end">
+          <button id="deletemediabutton"
+                  label="Delete"
+                  disabled="true"
+                  oncommand="deleteMediaFiles();"/>
+          <button label="Refresh List"
+                  oncommand="refreshUnassociatedMediaFiles();"/>
+        </hbox>
+        <separator/>
+        <label value="Broken Media Resources:"/>
+        <listbox id="mediareslist"
+                 flex="1"
+                 seltype="multiple"
+                 onselect="mediaResourcesSelected();"/>
+        <hbox align="center"
+              pack="end">
+          <button id="deletemediaresbutton"
+                  label="Delete"
+                  disabled="true"
+                  oncommand="deleteMediaResources();"/>
+          <button label="Refresh List"
+                  oncommand="refreshBrokenMediaResources();"/>
+        </hbox>
+      </tabpanel>
+      <tabpanel flex="1"
+                orient="vertical">
+        <vbox align="end"
+              pack="start"
+              flex="1">
+          <button label="Export JSON Tree…"
+                  oncommand="exportJSONTree();"/>
+        </vbox>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+
+</window>

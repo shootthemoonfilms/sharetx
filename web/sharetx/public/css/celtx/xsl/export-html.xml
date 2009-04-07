@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+  <xsl:output method="html"
+              encoding="UTF-8"/>
+
+  <xsl:param name="cssstyle"/>
+
+  <xsl:template match="html">
+    <html>
+      <head>
+        <title><xsl:apply-templates select="head/title"/></title>
+        <style type="text/css">
+          <xsl:value-of select="$cssstyle"/>
+        </style>
+      </head>
+      <body>
+        <xsl:apply-templates select="body/p"/>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template match="p">
+    <p>
+      <xsl:for-each select="@*">
+        <xsl:copy/>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()|text()"/>
+    </p>
+  </xsl:template>
+
+  <xsl:template match="span[@ref]">
+    <xsl:apply-templates select="node()|text()"/>
+  </xsl:template>
+
+  <xsl:template match="span">
+    <span>
+      <xsl:for-each select="@*">
+        <xsl:copy/>
+      </xsl:for-each>
+      <xsl:apply-templates select="node()|text()"/>
+    </span>
+  </xsl:template>
+
+  <xsl:template match="br">
+    <xsl:copy/>
+  </xsl:template>
+
+</xsl:stylesheet>

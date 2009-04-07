@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bindings id="searchboxbindings"
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="searchbox">
+    <content>
+      <xul:hbox class="searchbox-box"
+                flex="1"
+                align="center">
+        <xul:image class="searchbox-left"/>
+        <xul:textbox class="searchbox-textbox"
+                     anonid="textbox"
+                     flex="1"
+                     type="timed"
+                     timeout="1000"/>
+        <xul:toolbarbutton class="search-go-button"/>
+      </xul:hbox>
+    </content>
+    <implementation>
+      <constructor>
+        this.textbox = document.getAnonymousElementByAttribute(this, "anonid",
+          "textbox");
+      </constructor>
+      <property name="value">
+        <getter>
+          return this.textbox.value;
+        </getter>
+        <setter>
+          this.textbox.value = val;
+          return val;
+        </setter>
+      </property>
+    </implementation>
+  </binding>
+
+</bindings>

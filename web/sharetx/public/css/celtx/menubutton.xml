@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bindings id="celtxToolbarBindings"
+          xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<!--
+  <binding id="cx-menu-button"
+       extends="chrome://global/content/bindings/toolbarbutton.xml#menu-button">
+    <content>
+      <children includes="observes|template|menupopup|tooltip"/>
+      <xul:vbox>
+        <xul:hbox align="center" flex="1">
+          <xul:toolbarbutton class="box-inherit toolbarbutton-menubutton-button"
+                             anonid="button"
+                             allowevents="true"
+                             flex="1"
+                             style="border: 0px; padding: 0px; margin: 0px;"
+                             align="end"
+                             xbl:inherits="disabled,crop,image,label,accesskey,command,dir,pack,orient,toolbarmode,buttonstyle"/>
+          <xul:dropmarker type="menu-button"
+                          style="border: 0px; padding: 0px; margin: 0px;"
+                          class="toolbarbutton-menubutton-dropmarker"
+                          xbl:inherits="align,dir,pack,orient,disabled,toolbarmode,buttonstyle,label"/>
+        </xul:hbox>
+        <xul:hbox flex="1"
+                  class="toolbarbutton-text-box allowevents-box">
+          <xul:label class="toolbarbutton-text"
+                     crop="right"
+               xbl:inherits="value=label,accesskey,crop,toolbarmode,buttonstyle"
+                     flex="1"/>
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+  </binding>
+-->
+
+  <binding id="cx-menu-button"
+       extends="chrome://global/content/bindings/toolbarbutton.xml#menu-button">
+    <content>
+      <children includes="observes|template|menupopup|tooltip"/>
+      <xul:hbox flex="1">
+        <xul:toolbarbutton orient="vertical"
+                           style="margin: 0px; padding: 0px; border: 0px;"
+                           anonid="button"
+                           allowevents="true"
+                           flex="1"
+                           align="end"
+                           xbl:inherits="disabled,crop,image,label,accesskey,command,dir,pack,orient,toolbarmode,buttonstyle"/>
+        <xul:vbox class="cx-menu-marker-box">
+          <xul:dropmarker type="menu-button"
+                          class="toolbarbutton-menubutton-dropmarker"
+                          xbl:inherits="align,dir,pack,orient,disabled,toolbarmode,buttonstyle,label"/>
+        </xul:vbox>
+      </xul:hbox>
+    </content>
+  </binding>
+
+</bindings>

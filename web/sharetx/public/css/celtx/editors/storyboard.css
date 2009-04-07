@@ -1,0 +1,209 @@
+.duplicateshot {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  background-color: silver;
+}
+
+.deleteshot {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  background-color: silver;
+}
+
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+table {
+  width: 100%;
+  max-width: 100%;
+}
+
+p {
+  font-family: serif;
+  font-size: 10pt;
+}
+
+textarea {
+  margin-top: 5px;
+  padding: 2px;
+}
+
+#selecttoolbar {
+  z-index: 1;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+#selecttoolbar > div {
+  background-color: silver;
+  padding: 2px;
+}
+
+#selecttoolbar[hidden="true"] {
+  display: none;
+}
+
+#dropshadow {
+  z-index: 1;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: 1px dotted black;
+  width: 256px;
+  height: 256px;
+}
+
+#dropshadow[hidden="true"] {
+  display: none;
+}
+
+.seqheader {
+  background-color: lightblue;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  padding: 10px;
+}
+
+.seqfooter {
+  border-bottom: 1px solid black;
+  padding: 5px;
+}
+
+.seqheader  > input[type="text"],
+.seqheader > div {
+  width: 80%;
+  margin: 2px;
+}
+
+.shotcell {
+  margin: 2px;
+  border: 2px solid transparent;
+}
+
+td {
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+}
+
+td[dropbefore="true"] {
+  border-left: 2px solid gray;
+}
+
+td[dropafter="true"] {
+  border-right: 2px solid gray;
+}
+
+.imgcontainer {
+  width: 100%;
+  max-height: 206px;
+}
+
+.placeholder {
+  border: 1px dashed black;
+  padding: 10%;
+  width: 75%;
+  height: 140px;
+  position: relative;
+  top: 0px;
+}
+
+.shotimg {
+  padding: 5px 5px 9px 5px;
+  background: white url(chrome://celtx/skin/shade_bottom.png) repeat-x bottom left;
+  border-left: 1px solid #dcd7c8;
+  border-right: 1px solid #dcd7c8;
+  max-width: 95%;
+  max-height: 175px;
+  margin-bottom: 10px;
+}
+
+.shotnumber {
+  font-size: 10pt;
+}
+
+.shotcell textarea {
+  width: 95%;
+  font-family: serif;
+  font-size: 10pt;
+}
+
+.sequence {
+  clear: both;
+  margin-bottom: 1em;
+}
+
+.imageBox {
+  width: 27%;
+  float: left;
+  padding: 0px 2% 0px 1%;
+}
+
+.textBox {
+  width: 70%; float: left;
+}
+
+@media screen {
+  .shotcell[selected="true"] {
+    background-color: Highlight;
+    border: 2px solid Highlight;
+  }
+
+  body[edit="true"] .viewonly {
+    display: none;
+  }
+
+  body[edit="false"] .editonly {
+    display: none;
+  }
+}
+
+@media print {
+
+  table {
+    width: 100%;
+  }
+
+  .seqheader {
+    background-color: white;
+    border-top: none;
+    border-bottom: 1px solid black;
+    padding: 0in;
+    margin-bottom: 0.1in;
+  }
+
+  .seqfooter {
+    display: none;
+  }
+
+  input [type="button"] {
+    display: none;
+  }
+
+  .editonly, .placeholder, #selecttoolbar {
+    display: none;
+  }
+
+  .imageBox {
+    float: left;
+    width: 2.5in;
+  }
+
+  .imageBox img {
+    max-width: 2.25in;
+  }
+
+  .textBox {
+    float: left;
+    width: 4in;
+  }
+
+  input[type=button] {
+    display: none;
+  }
+
+}

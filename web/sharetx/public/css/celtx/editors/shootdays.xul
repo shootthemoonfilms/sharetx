@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/* ***** BEGIN LICENCE BLOCK *****
+ * Version: CePL 1.1
+ * 
+ * The contents of this file are subject to the Celtx Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.celtx.com/CePL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Celtx Script Manager.
+ * 
+ * The Initial Developer of the Original Code is 4067479 Canada Inc.
+ * t/a CELTX.
+ * 
+ * Portions created by Celtx are Copyright (C) 4067479 Canada Inc. All
+ * Rights Reserved.
+ * 
+ * Contributor(s):
+ *
+ ***** END LICENCE BLOCK ***** */
+-->
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+                 
+<?xml-stylesheet href="chrome://calendar/skin/widgets/minimonth.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/content/widgets/calendar-widget-bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://calendar/skin/widgets/calendar-widgets.css"?>
+
+<!DOCTYPE window [
+
+<!ENTITY % baseMenuOverlayDTD SYSTEM
+          "chrome://celtxapp/locale/baseMenuOverlay.dtd">
+%baseMenuOverlayDTD;
+<!ENTITY % browserDTD SYSTEM "chrome://celtxapp/locale/browser.dtd" >
+%browserDTD;
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="shootdaysdialog"
+        title="&shootDays.label;"
+        buttons="accept,cancel"
+        onload="loaded();"
+        ondialogaccept="return accepted();"
+        ondialogcancel="return canceled();">
+
+
+<script type="application/x-javascript"
+        src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/macWindowMenu.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/printUtils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/util.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/domutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/guiutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfmodel.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/itemtree.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/projectManager.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/project.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/mediamgr.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/app.js"/>
+  <script type="application/x-javascript"
+          src="chrome://calendar/content/calUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/editors/shootdays.js"/>
+
+  <vbox id="msgbox"
+        collapsed="true">
+    <label id="msgheader"
+           class="header"/>
+    <label id="msgdesc"/>
+    <separator class="groove"/>
+  </vbox>
+
+  <hbox>
+    <vbox flex="1">
+      <label value="&startOfShooting.label;&colon;"/>
+      <minimonth id="startdate"
+                 onselect="startDateChanged();"/>
+    </vbox>
+    <separator/>
+    <vbox flex="1">
+      <label value="&endOfShooting.label;&colon;"/>
+      <minimonth id="enddate"
+                 onselect="endDateChanged();"/>
+    </vbox>
+  </hbox>
+
+  <hbox align="center"
+        pack="start">
+    <label value="&shootDays.label;&colon;"/>
+    <label id="shootdaycount"/>
+  </hbox>
+
+  <hbox align="center"
+        pack="start">
+    <label value="&daysOff.label;&colon;"/>
+    <label id="daysoffcount"/>
+  </hbox>
+
+  <label id="warninglabel"
+         value=""
+         style="color: red;"/>
+
+</dialog>

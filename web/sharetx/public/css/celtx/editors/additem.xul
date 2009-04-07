@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE window [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd">
+%celtxDTD;
+]>
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="&addItem.label;"
+        onload="loaded()"
+        ondialogaccept="accepted()"
+        ondialogcancel="canceled()">
+
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/editors/additem.js"/>
+
+  <menulist id="itemlist"
+            editable="true">
+    <menupopup oncommand="selected()"/>
+  </menulist>
+
+</dialog>

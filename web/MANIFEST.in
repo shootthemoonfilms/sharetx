@@ -1,0 +1,3 @@
+include sharetx/config/deployment.ini_tmpl
+recursive-include sharetx/public *
+recursive-include sharetx/templates *

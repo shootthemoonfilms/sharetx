@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE stylesheet [
+<!ENTITY % browserDTD SYSTEM "chrome://celtxapp/locale/browser.dtd" >
+%browserDTD;
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns="http://www.w3.org/1999/xhtml"
+                version="1.0">
+
+  <xsl:output method="xml"
+              encoding="UTF-8"/>
+
+  <xsl:param name="show-description">0</xsl:param>
+  <xsl:param name="show-media">0</xsl:param>
+
+  <xsl:template match="/breakdown">
+    <html>
+      <head>
+        <title><xsl:value-of select="@title"/></title>
+        <style type="text/css">
+body {
+  font-family: helvetica;
+  font-size: 12px;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+table {
+  width: 100%;
+  font-size: 12px;
+}
+td {
+  width: 33%;
+  vertical-align: top;
+}
+.header {
+  font-weight: bold;
+}
+ul {
+  padding: 0 0 1em 0;
+  margin: 0 0 5px 0;
+}
+li {
+  list-style: none;
+  padding: 5px 0 0 1em;
+}
+.scene {
+  background-color: #9EA1BE;
+  border: 1px solid #8D90A6;
+  padding: 6px 2px 3px 10px;
+  font-weight: normal;
+}
+.contents {
+  padding: 8px 6px 8px 24px;
+  -moz-column-count: 2;
+}
+.unicontents {
+  padding: 8px 6px 8px 24px;
+}
+.bold {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.desc {
+  font-style: italic;
+  padding:0 10px 0 8px;
+}
+.banner {
+  display: block;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  margin: .67em 0;
+}
+.markuptext {
+  background-color: rgb(255, 255, 102);
+  border: 1px solid silver;
+  padding: 2px 2px 0px 2px;
+  margin-left: 4px;
+}
+@media print {
+  /*
+  .contents, .unicontents {
+    page-break-after: always;
+    height: 95%;
+  }
+  */
+  .banner {
+    display: none;
+  }
+}
+.itemimage {
+  float: left;
+  width: 50%;
+  height: 210pt;
+}
+img {
+  max-width: 200pt;
+  max-height: 180pt;
+}
+        </style>
+      </head>
+      <body>
+        <div class="banner">
+          <xsl:value-of select="@title"/>
+        </div>
+        <xsl:apply-templates select="scene"/>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template match="scene">
+    <xsl:if test="department">
+      <div class="scene">
+        <xsl:value-of select="@ordinal"/>
+        -
+        <span class="bold">
+          <xsl:value-of select="@title"/>
+        </span>
+        <xsl:if test="$show-description = 1 and @description != ''">
+          ::
+          <xsl:value-of select="@description"/>
+        </xsl:if>
+      </div>
+      <xsl:choose>
+        <xsl:when test="$show-description = 1 or count(department) = 1">
+          <div class="unicontents">
+            <xsl:apply-templates select="department"/>
+          </div>
+        </xsl:when>
+        <xsl:otherwise>
+          <div class="contents">
+            <xsl:apply-templates select="department"/>
+          </div>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:variable name="images" select="department/item/image"/>
+      <xsl:if test="$show-media = 1 and $images">
+        <br style="page-break-before: always;"/>
+        <xsl:for-each select="$images">
+          <xsl:variable name="dept" select="../../@title"/>
+          <xsl:variable name="item" select="../@title"/>
+          <xsl:call-template name="mediaimage">
+            <xsl:with-param name="deptname" select="$dept"/>
+            <xsl:with-param name="itemname" select="$item"/>
+            <xsl:with-param name="imagesrc" select="@src"/>
+          </xsl:call-template>
+          <xsl:if test="position() mod 6 = 0">
+            <br style="clear: both; page-break-after: always;"/>
+            <!-- Next media item gets beheaded if we don't do this -->
+            <xsl:if test="position() != last()">
+              <br/>
+            </xsl:if>
+          </xsl:if>
+        </xsl:for-each>
+        <xsl:if test="count($images) mod 6 != 0">
+          <br style="clear: both; page-break-after: always;"/>
+        </xsl:if>
+      </xsl:if>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="department">
+    <div class="dept">
+      <span class="header">
+        <xsl:value-of select="@title"/>
+      </span>
+      <ul>
+        <xsl:apply-templates select="item"/>
+      </ul>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="department" mode="single">
+    <div class="singledept">
+      <span class="header">
+        <xsl:value-of select="@title"/>
+      </span>
+      <ul>
+        <xsl:apply-templates select="item"/>
+      </ul>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="item">
+    <li>
+      <xsl:value-of select="@title"/>
+    </li>
+    <xsl:if test="markuptext">
+      <li>
+        <xsl:apply-templates select="markuptext"/>
+      </li>
+    </xsl:if>
+    <xsl:if test="$show-description = 1 and @description != ''">
+      <span class="desc">
+        <xsl:value-of select="@description"/>
+      </span>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="markuptext">
+    <span class="markuptext">
+      <xsl:apply-templates select="text()"/>
+    </span>
+  </xsl:template>
+
+  <xsl:template name="mediaimage">
+    <xsl:param name="deptname"/>
+    <xsl:param name="itemname"/>
+    <xsl:param name="imagesrc"/>
+    <div class="itemimage">
+      <span class="header">
+        <xsl:value-of select="$deptname"/>
+      </span>
+      <br/>
+      <xsl:value-of select="$itemname"/>
+      <br/>
+      <img>
+        <xsl:attribute name="src">
+          <xsl:value-of select="$imagesrc"/>
+        </xsl:attribute>
+      </img>
+    </div>
+  </xsl:template>
+
+</xsl:stylesheet>
+          

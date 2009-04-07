@@ -1,0 +1,139 @@
+/* ***** BEGIN LICENCE BLOCK *****
+ * Version: CePL 1.1
+ * 
+ * The contents of this file are subject to the Celtx Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.celtx.com/CePL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Celtx Script Manager.
+ * 
+ * The Initial Developer of the Original Code is Chad House and 4067479
+ * Canada Inc. t/a CELTX.
+ * 
+ * Portions created by Chad House are Copyright (C) 2000-2004 Chad House,
+ * parts created by Celtx are Copyright (C) 4067479 Canada Inc. All Rights
+ * Reserved.
+ * 
+ * Contributor(s):
+ *
+ ***** END LICENCE BLOCK ***** */
+
+body {
+  font-family: monospace;
+  background-color: white;
+}
+
+@media screen {
+  .character[dual="true"] {
+    display: list-item;
+    list-style-image: url(chrome://celtx/skin/dd.png);
+  }
+}
+
+p {
+  margin-top: 0em;
+  margin-bottom: 1em;
+}
+
+p.sceneheading, p.shot {
+  text-transform: uppercase;
+}
+
+p.character {
+  text-transform: uppercase;
+  margin-bottom: 0em;
+}
+
+p.character + p.action,
+p.character + p.shot,
+p.character + p.transition
+p.character + p.sceneheading {
+  margin-top: 1em;
+}
+
+p.parenthetical {
+  margin-bottom: 0em;
+}
+
+p.dialog {
+  margin-bottom: 0em;
+}
+
+p.dialog + p:not([class='parenthetical']) {
+  margin-top: 1em;
+}
+
+p.transition {
+  text-align: right;
+  text-transform: uppercase;
+}
+
+p.sceneheading:before {
+  content: counter(scenecountl);
+  counter-increment: scenecountl;
+  display: block;
+  margin-bottom: -1em;
+}
+
+p.sceneheading:after {
+  content: counter(scenecountr);
+  counter-increment: scenecountr;
+  display: block;
+  margin-top: -1em;
+  text-align: right;
+}
+
+p.sceneheading[ordinal]:before,
+p.sceneheading[ordinal]:after {
+  content: attr(ordinal);
+}
+
+.softbreak:after, .hardbreak:after {
+  counter-increment: pages;
+  content: counter(pages) ".";
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  text-align: right;
+}
+
+@media screen {
+  p.sceneheading {
+    background-color: #E8E8E8;
+  }
+  .softbreak {
+    border-top: 1px dashed black;
+    width: 100%;
+  }
+  .hardbreak {
+    border-top: 1px solid black;
+    width: 100%;
+  }
+  .firstpage, .firstpagespacer {
+    display: none;
+  }
+}
+
+@media print {
+  .softbreak, .hardbreak {
+    page-break-before: always;
+  }
+
+  .firstpage, .firstpagespacer {
+    height: 1em;
+    margin-bottom: 1em;
+  }
+
+  .firstpage:after {
+    content: "1.";
+    display: block;
+    text-align: right;
+  }
+}
+

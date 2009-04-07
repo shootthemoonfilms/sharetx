@@ -1,0 +1,86 @@
+/* ***** BEGIN LICENCE BLOCK *****
+ * Version: CePL 1.1
+ * 
+ * The contents of this file are subject to the Celtx Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.celtx.com/CePL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Celtx Script Manager.
+ * 
+ * The Initial Developer of the Original Code is Chad House and 4067479
+ * Canada Inc. t/a CELTX.
+ * 
+ * Portions created by Chad House are Copyright (C) 2000-2006 Chad House,
+ * parts created by Celtx are Copyright (C) 4067479 Canada Inc. All Rights
+ * Reserved.
+ * 
+ * Contributor(s):
+ *
+ ***** END LICENCE BLOCK ***** */
+
+@import url(chrome://celtx/skin/toolbar.css);
+
+medialist {
+  -moz-binding: url(chrome://celtx/content/editors/datasheet.xml#media-list);
+}
+
+textarea[readonly="true"] {
+  border: 1px solid black;
+}
+
+img.plusminus {
+  border: none;
+  width: 11px;
+  height: 11px;
+}
+
+a {
+  text-decoration: underline;
+  color: blue;
+}
+
+removelink {
+  -moz-binding: url(chrome://celtx/content/editors/datasheet.xml#removelink);
+  font-size: 10px;
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}
+
+picklist {
+  -moz-binding: url(chrome://celtx/content/editors/datasheet.xml#picklist);
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}
+
+select {
+  font-size: 9pt;
+}
+/*
+img.thumbnail {
+  margin: 2px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: silver;
+  max-height: 75px;
+}
+
+
+.media-box {
+  min-height: 80px;
+}
+*/
+
+.rm-label {
+  font-size: 10px;
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}

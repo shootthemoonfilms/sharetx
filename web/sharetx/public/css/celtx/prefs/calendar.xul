@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd">
+%celtxDTD;
+<!ENTITY % calendarDTD SYSTEM "chrome://calendar/locale/global.dtd">
+%calendarDTD;
+]>
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+<?xml-stylesheet type="text/css"
+  href="chrome://calendar/content/datetimepickers/datetimepickers.css"?>
+
+<overlay id="paneCalendarOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <prefpane id="paneCalendar"
+            onpaneload="calendarPaneLoaded()">
+    <preferences>
+      <preference id="celtx.calendar.daystart"
+                  name="celtx.calendar.daystart"
+                  type="int"/>
+      <preference id="celtx.calendar.scene.defaultlength"
+                  name="celtx.calendar.scene.defaultlength"
+                  type="int"/>
+      <preference id="celtx.calendar.workdaysonly"
+                  name="celtx.calendar.workdaysonly"
+                  type="bool"/>
+      <preference id="calendar.week.start"
+                  name="calendar.week.start"
+                  type="int"/>
+      <preference id="calendar.week.d0sundaysoff"
+                  name="calendar.week.d0sundaysoff"
+                  type="bool"
+                  inverted="true"/>
+      <preference id="calendar.week.d1mondaysoff"
+                  name="calendar.week.d1mondaysoff"
+                  type="bool"
+                  inverted="true"/>
+      <preference id="calendar.week.d2tuesdaysoff"
+                  name="calendar.week.d2tuesdaysoff"
+                  type="bool"
+                  inverted="true"/>
+      <preference id="calendar.week.d3wednesdaysoff"
+                  name="calendar.week.d3wednesdaysoff"
+                  type="bool"
+                  inverted="true"/>
+      <preference id="calendar.week.d4thursdaysoff"
+                  name="calendar.week.d4thursdaysoff"
+                  type="bool"
+                  inverted="true"/>
+      <preference id="calendar.week.d5fridaysoff"
+                  name="calendar.week.d5fridaysoff"
+                  type="bool"
+                  inverted="true"/>
+      <preference id="calendar.week.d6saturdaysoff"
+                  name="calendar.week.d6saturdaysoff"
+                  type="bool"
+                  inverted="true"/>
+    </preferences>
+    <script type="application/x-javascript">
+function readDayStartPref () {
+  var pref = document.getElementById("celtx.calendar.daystart");
+  var hours = Math.floor(pref.value / 3600);
+  var minutes = Math.floor((pref.value % 3600) / 60);
+  var seconds = pref.value % 60;
+  var date = new Date();
+  date.setHours(hours, minutes, seconds);
+  return date;
+}
+
+function writeDayStartPref () {
+  var date = document.getElementById("daystart").value;
+  return date.getHours() * 3600 + date.getMinutes() * 60
+    + date.getSeconds();
+}
+
+function readSceneLengthPref () {
+  var pref = document.getElementById("celtx.calendar.scene.defaultlength");
+  var menu = document.getElementById("scenelength");
+  menu.selectedItem = getItemByValue(menu, pref.value);
+}
+
+function writeSceneLengthPref () {
+  var menu = document.getElementById("scenelength");
+  var pref = document.getElementById("celtx.calendar.scene.defaultlength");
+  pref.value = menu.selectedItem.value;
+}
+
+function calendarPaneLoaded () {
+  dump("    calendar pane loaded\n");
+  var daystart = document.getElementById("daystart");
+  daystart.value = readDayStartPref();
+  readSceneLengthPref();
+}
+    </script>
+    <groupbox>
+      <caption label="&general.label;"/>
+      <grid pack="start">
+        <columns>
+          <column/>
+          <column flex="1"/>
+        </columns>
+        <rows>
+          <row>
+            <label value="&startOfDay.label;&colon;"/>
+            <timepicker id="daystart"
+                        preference="celtx.calendar.daystart"
+                        onsyncfrompreference="return readDayStartPref();"
+                        onsynctopreference="return writeDayStartPref();"/>
+          </row>
+          <row>
+            <label value="&startOfWeek.label;&colon;"/>
+            <menulist id="weekstarts" preference="calendar.week.start">
+              <menupopup id="weekstarts">
+                <menuitem label="&day.1.name;" value="0"/>
+                <menuitem label="&day.2.name;" value="1"/>
+                <menuitem label="&day.3.name;" value="2"/>
+                <menuitem label="&day.4.name;" value="3"/>
+                <menuitem label="&day.5.name;" value="4"/>
+                <menuitem label="&day.6.name;" value="5"/>
+                <menuitem label="&day.7.name;" value="6" selected="true"/>
+              </menupopup>
+            </menulist>
+          </row>
+          <row>
+            <label value="&defaultSceneLength.label;&colon;"/>
+            <menulist id="scenelength"
+                      oncommand="writeSceneLengthPref();">
+              <menupopup>
+                <menuitem label="&thirtyMinutes.label;"
+                          value="30"/>
+                <menuitem label="&oneHour.label;"
+                          value="60"/>
+                <menuitem label="&twoHours.label;"
+                          value="120"/>
+                <menuitem label="&threeHours.label;"
+                          value="180"/>
+                <menuitem label="&fourHours.label;"
+                          value="240"/>
+              </menupopup>
+            </menulist>
+          </row>
+        </rows>
+      </grid>
+    </groupbox>
+    <groupbox>
+      <caption label="&workweek.label;"/>
+      <hbox>
+        <label value="&includeInWorkweek.label;&colon;"/>
+        <checkbox class="dayOffCheckbox"
+                  label="&day.1.Ddd;"
+                  orient="vertical"
+                  preference="calendar.week.d0sundaysoff"/>
+        <checkbox class="dayOffCheckbox"
+                  label="&day.2.Ddd;"
+                  orient="vertical"
+                  preference="calendar.week.d1mondaysoff"/>
+        <checkbox class="dayOffCheckbox"
+                  label="&day.3.Ddd;"
+                  orient="vertical"
+                  preference="calendar.week.d2tuesdaysoff"/>
+        <checkbox class="dayOffCheckbox"
+                  label="&day.4.Ddd;"
+                  orient="vertical"
+                  preference="calendar.week.d3wednesdaysoff"/>
+        <checkbox class="dayOffCheckbox"
+                  label="&day.5.Ddd;"
+                  orient="vertical"
+                  preference="calendar.week.d4thursdaysoff"/>
+        <checkbox class="dayOffCheckbox"
+                  label="&day.6.Ddd;"
+                  orient="vertical"
+                  preference="calendar.week.d5fridaysoff"/>
+        <checkbox class="dayOffCheckbox"
+                  label="&day.7.Ddd;"
+                  orient="vertical"
+                  preference="calendar.week.d6saturdaysoff"/>
+      </hbox>
+      <checkbox label="&showWorkdaysOnly.label;"
+                preference="celtx.calendar.workdaysonly"/>
+    </groupbox>
+  </prefpane>
+</overlay>

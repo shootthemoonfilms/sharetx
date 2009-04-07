@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd">
+%celtxDTD;
+]>
+
+<?xml-stylesheet href="chrome://celtx/skin/celtx.css" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="&printCardsDialog.title;"
+        buttons="accept,cancel"
+        ondialogaccept="return accepted()"
+        onload="loaded()">
+
+  <script type="application/x-javascript">
+var gDialog = new Object();
+
+function loaded () {
+  gDialog.config = window.arguments[0];
+  if (! gDialog.config.colours)
+    document.getElementById("colourcheckbox").checked = false;
+  if (! gDialog.config.borders)
+    document.getElementById("bordercheckbox").checked = false;
+  adjustSettings();
+}
+
+function adjustSettings () {
+  var colours = document.getElementById("colourcheckbox").checked;
+  var borders = document.getElementById("bordercheckbox").checked;
+  for (var i = 1; i &lt;= 3; ++i) {
+    var card = document.getElementById("card" + i);
+    var style = borders ? "border: 1px solid black; " : "";
+    if (colours) {
+      switch (i) {
+        case 1:
+          style += "background-color: #FFCCFF;";
+          break;
+        case 2:
+          style += "background-color: #CCFFCC;";
+          break;
+        case 3:
+          style += "background-color: #C8E6FF;";
+          break;
+      }
+    }
+    else
+      style += "background-color: #EEEEEE;";
+    card.setAttribute("style", style);
+  }
+}
+
+function accepted () {
+  gDialog.config.accepted = true;
+  gDialog.config.colours = document.getElementById("colourcheckbox").checked;
+  gDialog.config.borders = document.getElementById("bordercheckbox").checked;
+  return true;
+}
+  </script>
+
+  <vbox>
+    <hbox pack="center">
+      <vbox style="padding: 10px 17px; background-color: white; border: 1px solid black;">
+        <box id="card1"
+             width="50"
+             height="30"/>
+        <box id="card2"
+             width="50"
+             height="30"/>
+        <box id="card3"
+             width="50"
+             height="30"/>
+      </vbox>
+    </hbox>
+    <spacer height="20"/>
+    <checkbox id="colourcheckbox"
+              label="&printBackgroundColour.label;"
+              checked="true"
+              oncommand="adjustSettings()"/>
+    <checkbox id="bordercheckbox"
+              label="&printCardBorders.label;"
+              checked="true"
+              oncommand="adjustSettings()"/>
+  </vbox>
+
+</dialog>

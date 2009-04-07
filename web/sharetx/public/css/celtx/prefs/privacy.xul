@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd">
+%celtxDTD;
+]>
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+
+<overlay id="panePrivacyOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <prefpane id="panePrivacy"
+            label="&privacy.label;">
+    <preferences>
+      <preference id="network.cookie.cookieBehavior"
+                  name="network.cookie.cookieBehavior"
+                  type="int"/>
+    </preferences>
+
+    <script type="application/x-javascript">
+function readEnableCookiesPref () {
+  var pref = document.getElementById("network.cookie.cookieBehavior");
+  return pref.value != 2;
+}
+
+function writeEnableCookiesPref () {
+  var box = document.getElementById("enableCookies");
+  return box.checked ? 0 : 2;
+}
+    </script>
+
+    <checkbox id="enableCookies"
+              preference="network.cookie.cookieBehavior"
+              label="&enableStats.label;"
+              onsyncfrompreference="return readEnableCookiesPref();"
+              onsynctopreference="return writeEnableCookiesPref();"/>
+    <description>&enableStats.desc;</description>
+  </prefpane>
+
+</overlay>

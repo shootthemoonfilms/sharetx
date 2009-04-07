@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE window [
+
+<!ENTITY % baseMenuOverlayDTD SYSTEM
+          "chrome://celtxapp/locale/baseMenuOverlay.dtd">
+%baseMenuOverlayDTD;
+<!ENTITY % browserDTD SYSTEM "chrome://celtxapp/locale/browser.dtd" >
+%browserDTD;
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://celtx/skin/templates.css" type="text/css"?>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="newprojectdialog"
+        title="&createProject.title;"
+        onload="loaded()">
+
+
+<script type="application/x-javascript"
+        src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/macWindowMenu.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/printUtils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/util.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/domutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/guiutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfmodel.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/itemtree.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/projectManager.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/project.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/mediamgr.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/app.js"/>
+
+  <script src="chrome://celtx/content/templates.js"
+          type="application/x-javascript"/>
+  <script type="application/x-javascript">
+  <![CDATA[
+var gWindow = new Object();
+var gSelectedItem = null;
+
+
+function loaded () {
+  populateTemplates();
+}
+
+
+function accept () {
+  if (! gSelectedItem) {
+    dump("*** accept: No selected item\n");
+    return;
+  }
+
+  var spec = gSelectedItem.getAttribute("value");
+  setTimeout("close()", 0);
+  window.openDialog(Cx.CONTENT_PATH, "_blank", Cx.NEW_WINDOW_FLAGS, spec);
+}
+
+
+function templateSelected (event) {
+  gSelectedItem = document.getElementById("templatelist").selectedItem;
+  if (gSelectedItem)
+    accept();
+}
+
+
+function populateTemplates () {
+  var tmpllist = getTemplateList();
+  var listbox = document.getElementById("templatelist");
+  // var rows = document.getElementById("templaterows");
+  // var row = null;
+  for (var i = 0; i < tmpllist.length; ++i) {
+    var info = null;
+    try {
+      info = getTemplateInfo(tmpllist[i]);
+    }
+    catch (ex) {
+      dump("*** getTemplateInfo failed for " + tmpllist[i].leafName
+        + ": " + ex + "\n");
+      continue;
+    }
+    var item = document.createElement("richlistitem");
+    item.setAttribute("class", "projectitem");
+    item.setAttribute("align", "center");
+    item.setAttribute("orient", "horizontal");
+    item.setAttribute("value", info.fileuri);
+    var image = document.createElement("image");
+    if (info.iconuri)
+      image.setAttribute("src", info.iconuri);
+    else
+      image.setAttribute("src", "chrome://celtx/skin/celtx.png");
+    item.appendChild(image);
+    var label = document.createElement("label");
+    label.setAttribute("crop", "end");
+    label.appendChild(document.createTextNode(info.title));
+    item.appendChild(label);
+
+    listbox.appendChild(item);
+  }
+}
+  ]]>
+  </script>
+
+  <toolbar orient="vertical">
+    <hbox class="listgroup"
+          flex="1">
+      <vbox class="listcolumn"
+            flex="1">
+        <label class="projectlistheader"
+               value="&createProject.label;"/>
+        <richlistbox id="templatelist"
+                     class="projectlist"
+                     flex="1"
+                     onclick="templateSelected(event)"/>
+      </vbox>
+    </hbox>
+    <hbox pack="end">
+      <button label="&closeCmd.label;"
+              oncommand="window.close()"/>
+    </hbox>
+  </toolbar>
+</window>

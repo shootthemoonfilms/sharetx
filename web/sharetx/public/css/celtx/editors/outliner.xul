@@ -1,0 +1,523 @@
+<?xml version="1.0"?>
+
+<!--
+/* ***** BEGIN LICENCE BLOCK *****
+ * Version: CePL 1.1
+ * 
+ * The contents of this file are subject to the Celtx Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.celtx.com/CePL/
+ * 
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ * 
+ * The Original Code is Celtx Script Manager.
+ * 
+ * The Initial Developer of the Original Code is Chad House and 4067479
+ * Canada Inc. t/a CELTX.
+ * 
+ * Portions created by Chad House are Copyright (C) 2000-2004 Chad House,
+ * parts created by Celtx are Copyright (C) 4067479 Canada Inc. All Rights
+ * Reserved.
+ * 
+ * Contributor(s):
+ *
+ ***** END LICENCE BLOCK ***** */
+-->
+
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://celtx/skin/toolbar.css" type="text/css"?>
+<?xml-stylesheet href="chrome://celtx/content/editors/editors.css"
+                 type="text/css"?>
+
+<!DOCTYPE window [
+
+<!ENTITY % baseMenuOverlayDTD SYSTEM
+          "chrome://celtxapp/locale/baseMenuOverlay.dtd">
+%baseMenuOverlayDTD;
+<!ENTITY % browserDTD SYSTEM "chrome://celtxapp/locale/browser.dtd" >
+%browserDTD;
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd" >
+%celtxDTD;
+]>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="outliner"
+        title="Outliner"
+        onload="loaded()">
+
+
+<script type="application/x-javascript"
+        src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/macWindowMenu.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/printUtils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/util.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/domutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/guiutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfmodel.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/itemtree.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/projectManager.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/project.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/mediamgr.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/app.js"/>
+
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/editors/outliner.js"/>
+
+
+  <broadcaster id="toolbar-broadcaster" mode="none"/>
+
+  <commandset id="fileCommandSet">
+    <command id="cmd-new-project"
+             oncommand="goDoCommand('cmd-new-project')"/>
+    <command id="cmd-download-project"
+             oncommand="goDoCommand('cmd-download-project')"/>
+    <command id="cmd-open-project"
+             oncommand="goDoCommand('cmd-open-project')"/>
+    <command id="cmd-open-studio"
+             oncommand="goDoCommand('cmd-open-studio')"/>
+    <command id="cmd-open-pc"
+             oncommand="goDoCommand('cmd-open-pc')"/>
+    <command id="cmd-copy-project"
+             disabled="true"
+             oncommand="goDoCommand('cmd-copy-project')"/>
+    <command id="cmd-save-project"
+             disabled="true"
+             oncommand="goDoCommand('cmd-save-project')"/>
+    <command id="cmd-save-project-as"
+             disabled="true"
+             oncommand="goDoCommand('cmd-save-project-as')"/>
+    <command id="cmd-save-project-template"
+             disabled="true"
+             oncommand="goDoCommand('cmd-save-project-template')"/>
+    <command id="cmd-close"
+             oncommand="goDoCommand('cmd-close')"/>
+    <command id="cmd-close-window"
+             oncommand="goDoCommand('cmd-close-window')"/>
+    <command id="cmd-page-setup"
+             disabled="true"
+             oncommand="goDoCommand('cmd-page-setup');"/>
+    <command id="cmd-print-preview"
+             disabled="true"
+             oncommand="goDoCommand('cmd-print-preview')"/>
+    <command id="cmd-print"
+             disabled="true"
+             oncommand="goDoCommand('cmd-print')"/>
+    <command id="cmd-quit"
+             oncommand="goQuitApplication()"/>
+  </commandset>
+
+  <keyset id="fileMenuKeyset">
+    <key id="key-new-project"
+         key="&newNavigatorCmd.key;"
+         command="cmd-new-project"
+         modifiers="accel"/>
+    <key id="key-open-project"
+         key="&openFileCmd.commandkey;"
+         command="cmd-open-project"
+         modifiers="accel"/>
+    <key id="key-save-project-as"
+         key="&savePageCmd.commandkey;"
+         command="cmd-save-project-as"
+         modifiers="accel,shift"/>
+    <key id="key-save-project"
+         key="&savePageCmd.commandkey;"
+         command="cmd-save-project"
+         modifiers="accel"/>
+    <key id="key-close"
+         key="&closeCmd.key;"
+         command="cmd-close"
+         modifiers="accel"/>
+    <key id="key-close-window"
+         key="&closeCmd.key;"
+         command="cmd-close-window"
+         modifiers="accel,shift"/>
+    <key id="key-print"
+         key="&printCmd.commandkey;"
+         command="cmd-print"
+         modifiers="accel"/>
+    <key id="key_quitApplication"
+          key="&quitApplicationCmdMac.key;"
+          command="cmd-quit"
+          modifiers="accel"/>
+  </keyset>
+
+  <commandset id="globalEditCommandSet"
+              commandupdater="true"
+              events="focus"
+              oncommandupdate="goUpdateGlobalEditMenuItems()"/>
+  <commandset id="selectEditCommandSet"
+              commandupdater="true"
+              events="select"
+              oncommandupdate="goUpdateSelectEditMenuItems()"/>
+  <commandset id="undoEditCommandSet"
+              commandupdater="true"
+              events="undo"
+              oncommandupdate="goUpdateUndoEditMenuItems()"/>
+  <commandset id="pasteCommandSet"
+              commandupdater="true"
+              events="clipboard"
+              oncommandupdate="goUpdatePasteMenuItems()"/>
+
+  <commandset id="editCommandSet">
+    <command id="cmd_undo" 
+             oncommand="goDoCommand('cmd_undo')"
+             disabled="true"/>
+    <command id="cmd_redo" 
+             oncommand="goDoCommand('cmd_redo')"
+             disabled="true"/>
+    <command id="cmd_cut" 
+             oncommand="goDoCommand('cmd_cut')"
+             disabled="true"/>
+    <command id="cmd_copy" 
+             oncommand="goDoCommand('cmd_copy')"
+             disabled="true"/>
+    <command id="cmd_paste" 
+             oncommand="goDoCommand('cmd_paste')"
+             disabled="true"/>
+    <command id="cmd_delete"
+             oncommand="goDoCommand('cmd_delete')"
+             valueDefault="&deleteCmd.label;"
+             disabled="true"/>
+    <command id="cmd_selectAll"
+             oncommand="goDoCommand('cmd_selectAll')"
+             disabled="true"/>
+    <command id="cmd-find"
+             disabled="true"
+             oncommand="goDoCommand('cmd-find')"/>
+    <command id="cmd-replace"
+             disabled="true"
+             oncommand="goDoCommand('cmd-replace')"/>
+    <command id="cmd-find-again"
+             disabled="true"
+             oncommand="goDoCommand('cmd-find-again')"/>
+    <command id="cmd-find-previous"
+             disabled="true"
+             oncommand="goDoCommand('cmd-find-previous')"/>
+  </commandset>
+
+  <keyset id="editMenuKeySet">
+    <key id="key_undo"
+         key="&undoCmd.key;"
+         modifiers="accel"/>
+    <key id="key_redo"
+         key="&undoCmd.key;"
+         modifiers="accel,shift"/>
+    <key id="key_cut"
+         key="&cutCmd.key;"
+         modifiers="accel"/>
+    <key id="key_copy"
+         key="&copyCmd.key;"
+         modifiers="accel"/>
+    <key id="key_paste"
+         key="&pasteCmd.key;"
+         modifiers="accel"/>
+    <key id="key_delete"
+         keycode="VK_DELETE"
+         command="cmd_delete"/>
+    <key id="key_selectAll"
+         key="&selectAllCmd.key;"
+         modifiers="accel"/>
+    <key id="key_find"
+         key="&findOnCmd.commandkey;"
+         command="cmd-find"
+         modifiers="accel"/>
+    <key id="key_findAgain"
+         key="&findAgainCmd.commandkey;"
+         command="cmd-find-again"
+         modifiers="accel"/>
+    <key id="key_findPrevious"
+         key="&findAgainCmd.commandkey;"
+         command="cmd-find-previous"
+         modifiers="accel,shift"/>
+    <key keycode="&findAgainCmd.commandkey2;"
+         command="cmd-find-again"/>
+    <key keycode="&findAgainCmd.commandkey2;"
+         command="cmd-find-previous"
+         modifiers="shift"/>
+  </keyset>
+
+  <commandset id="toolsCommandSet">
+    <command id="cmd-check-spelling"
+             oncommand="goDoCommand('cmd-check-spelling')"
+             disabled="true"/>
+    <command id="cmd-toggle-inline-spelling"
+             oncommand="goDoCommand('cmd-toggle-inline-spelling')"
+             disabled="true"/>
+  </commandset>
+
+  <commandset id="helpCommandSet">
+    <command id="cmd-about-celtx"
+             oncommand="goDoCommand('cmd-about-celtx')"/>
+    <command id="cmd-help-support"
+             oncommand="goDoCommand('cmd-help-support')"/>
+    <command id="cmd-celtx-wiki"
+             oncommand="goDoCommand('cmd-celtx-wiki')"/>
+    <command id="cmd-video-tutorial"
+             oncommand="goDoCommand('cmd-video-tutorial')"/>
+    <command id="cmd-help-report-bug"
+             oncommand="goDoCommand('cmd-help-report-bug')"/>
+    <command id="cmd-help-account"
+             oncommand="goDoCommand('cmd-help-account')"/>
+  </commandset>
+
+
+  <keyset id="baseMenuKeyset">
+    <key id="key_openHelpMacFrontend"
+         oncommand="openHelpLink('firefox-help');"
+         key="&openHelpMac.frontendCommandkey;"
+         modifiers="&openHelpMac.frontendModifiers;"/>
+<!-- These are used to build the Application menu under Cocoa widgets -->
+    <key id="key_preferencesCmdMac"
+         key="&preferencesCmdMac.commandkey;"
+         modifiers="&preferencesCmdMac.modifiers;"/>
+    <key id="key_hideThisAppCmdMac"
+         key="&hideThisAppCmdMac.commandkey;"
+         modifiers="&hideThisAppCmdMac.modifiers;"/>
+    <key id="key_hideOtherAppsCmdMac"
+         key="&hideOtherAppsCmdMac.commandkey;"
+         modifiers="&hideOtherAppsCmdMac.modifiers;"/>
+  </keyset>
+
+  <commandset id="windowMenuCommandSet">
+    <command id="minimizeWindow"
+             label="&minimizeWindow.label;"
+             oncommand="window.minimize();" />
+    <command id="zoomWindow"
+             label="&zoomWindow.label;"
+             oncommand="zoomWindow();" />
+  </commandset>
+  <keyset id="windowMenuKeyset">
+    <key id="key_minimizeWindow"
+         command="minimizeWindow"
+         key="&minimizeWindow.key;"
+         modifiers="accel"/>
+  </keyset>
+
+  <commandset>
+    <command id="cmd_bold"
+             state="false"
+             oncommand="goDoCommand('cmd_bold')"/>
+    <command id="cmd_italic"
+             state="false"
+             oncommand="goDoCommand('cmd_italic')"/>
+    <command id="cmd_underline"
+             state="false"
+             oncommand="goDoCommand('cmd_underline')"/>
+    <command id="cmd_strikethrough"
+             state="false"
+             oncommand="goDoCommand('cmd_strikethrough')"/>
+    <command id="cmd-decrease-indent"
+             oncommand="goDoCommand('cmd-decrease-indent')"/>
+    <command id="cmd-increase-indent"
+             oncommand="goDoCommand('cmd-increase-indent')"/>
+    <command id="cmd-toggle-ol"
+             oncommand="goDoCommand('cmd-toggle-ol')"/>
+    <command id="cmd-toggle-ul"
+             oncommand="goDoCommand('cmd-toggle-ul')"/>
+    <command id="cmd-align-left"
+             oncommand="goDoCommand('cmd-align-left')"/>
+    <command id="cmd-align-center"
+             oncommand="goDoCommand('cmd-align-center')"/>
+    <command id="cmd-align-right"
+             oncommand="goDoCommand('cmd-align-right')"/>
+    <command id="cmd-align-justify"
+             oncommand="goDoCommand('cmd-align-justify')"/>
+    <command id="cmd-font-face"
+             oncommand="goDoCommand('cmd-font-face')"/>
+    <command id="cmd-font-size"
+             oncommand="goDoCommand('cmd-font-size')"/>
+  </commandset>
+
+  <popupset id="outliner-popupset">
+    <popup id="outliner-context"
+           onpopupshowing="gController.onContextShowing(this)">
+      <menuitem id="spellCheckNoSuggestions"
+                label="(&spellCheckNoSuggestions.label;)"
+                disabled="true"/>
+      <menuseparator id="spellCheckAddSep"/>
+      <menuitem id="spellCheckAddToDictionary"
+                label="&spellCheckAddToDictionary.label;"
+                accesskey="&spellCheckAddToDictionary.accesskey;"
+                oncommand="InlineSpellChecker.addToDictionary(null,null);"/>  
+      <menuitem id="spellCheckIgnoreWord"
+                label="&spellCheckIgnoreWord.label;"
+                accesskey="&spellCheckIgnoreWord.accesskey;"
+                oncommand="InlineSpellChecker.ignoreWord(null, null)"/>  
+      <menuseparator id="spellCheckSuggestionsSeparator"/>
+      <menuitem id="editor-popup-cut"
+                label="&cutCmd.label;"
+                command="cmd_cut"/>
+      <menuitem id="editor-popup-copy"
+                label="&copyCmd.label;"
+                command="cmd_copy"/>
+      <menuitem id="editor-popup-paste"
+                label="&pasteCmd.label;"
+                command="cmd_paste"/>
+      <menuseparator id="wordCountSep"
+                     hidden="true"/>
+      <menuitem id="wordCountItem"
+                label="."
+                disabled="true"
+                style="color: MenuText;"
+                hidden="true"/>
+    </popup>
+  </popupset>
+
+  <keyset id="outliner-keyset">
+    <key id="key-bold"
+         key="&bold.commandkey;"
+         modifiers="accel"
+         oncommand="goDoCommand('cmd_bold')"/>
+    <key id="key-italic"
+         key="&italic.commandkey;"
+         modifiers="accel"
+         oncommand="goDoCommand('cmd_italic')"/>
+    <key id="key-underline"
+         key="&underline.commandkey;"
+         modifiers="accel"
+         oncommand="goDoCommand('cmd_underline')"/>
+  </keyset>
+
+  <toolbox id="outliner-toolbar">
+  <toolbar class="editortoolbar">
+    <toolbaritem align="center">
+      <!-- Needs a default label or else it's initially collapsed on Windows -->
+      <menulist id="fontFaceMenu"
+                oncommand="goDoCommand('cmd-font-face')"
+                label="Times">
+        <menupopup/>
+      </menulist>
+    </toolbaritem>
+    <toolbarbutton class="celtx-decrease-fontsize"
+                   tooltiptext="&decreaseFontSizeCmd.tooltip;"
+                   oncommand="gController.decreaseFontSize()"/>
+    <toolbarbutton class="celtx-increase-fontsize"
+                   tooltiptext="&increaseFontSizeCmd.tooltip;"
+                   oncommand="gController.increaseFontSize()"/>
+    <toolbaritem>
+      <colorpicker id="fontColourPicker"
+                   type="button"
+                   value="rgb(0, 0, 0)"
+                   onchange="gController.cmdTextColour(this.color)"/>
+    </toolbaritem>
+    <toolbarseparator />
+    <toolbarbutton class="celtx-undo-button format-toolbar-button"
+                   tooltiptext="&undoCmd.label;"
+                   onclick="goDoCommand('cmd_undo')"/>
+    <toolbarbutton class="celtx-redo-button format-toolbar-button"
+                   tooltiptext="&redoCmd.label;"
+                   onclick="goDoCommand('cmd_redo')"/>
+    <toolbarseparator />
+    <toolbarbutton class="celtx-cut-button format-toolbar-button"
+                   tooltiptext="&cutCmd.label;"
+                   onclick="goDoCommand('cmd_cut')"/>
+    <toolbarbutton class="celtx-copy-button format-toolbar-button"
+                   tooltiptext="&copyCmd.label;"
+                   onclick="goDoCommand('cmd_copy')"/>
+    <toolbarbutton class="celtx-paste-button format-toolbar-button"
+                   tooltiptext="&pasteCmd.label;"
+                   onclick="goDoCommand('cmd_paste')"/>
+    <toolbarseparator />
+    <toolbarbutton class="celtx-find-button format-toolbar-button"
+                   tooltiptext="&findCmd.label;"
+                   oncommand="goDoCommand('cmd-find')" />
+    <toolbarbutton class="celtx-spell-button format-toolbar-button"
+                   tooltiptext="&spellCheckCmd.label;"
+                   oncommand="goDoCommand('cmd-check-spelling')" />
+    <toolbarseparator/>
+    <toolbaritem align="center">
+      <menulist oncommand="gController.setZoom(Number(
+                            this.selectedItem.value))">
+        <menupopup>
+          <menuitem label="50%" value="50"/>
+          <menuitem label="75%" value="75"/>
+          <menuitem label="100%" value="100" selected="true"/>
+          <menuitem label="120%" value="120"/>
+          <menuitem label="150%" value="150"/>
+          <menuitem label="200%" value="200"/>
+        </menupopup>
+      </menulist>
+    </toolbaritem>
+  </toolbar>
+  <toolbar class="editortoolbar">
+    <toolbarbutton class="celtx-bold-button format-toolbar-button"
+                   tooltiptext="&bold.label;"
+                   observes="cmd_bold"
+                   oncommand="goDoCommand('cmd_bold')"/>
+    <toolbarbutton class="celtx-italic-button format-toolbar-button"
+                   tooltiptext="&italic.label;"
+                   observes="cmd_italic"
+                   oncommand="goDoCommand('cmd_italic')"/>
+    <toolbarbutton class="celtx-underline-button format-toolbar-button"
+                   tooltiptext="&underline.label;"
+                   observes="cmd_underline"
+                   oncommand="goDoCommand('cmd_underline')"/>
+    <toolbarbutton class="celtx-strikethrough-button"
+                   tooltiptext="&strikethrough.label;"
+                   observes="cmd_strikethrough"
+                   oncommand="goDoCommand('cmd_strikethrough')"/>
+    <toolbarbutton class="celtx-uppercase-button format-toolbar-button"
+                   tooltiptext="&uppercaseCmd.tooltip;"
+                   onclick="goDoCommand('cmd-uppercase')"/>
+    <toolbarbutton class="celtx-lowercase-button format-toolbar-button"
+                   tooltiptext="&lowercaseCmd.tooltip;"
+                   oncommand="goDoCommand('cmd-lowercase')"/>
+    <toolbarseparator />
+    <toolbarbutton class="celtx-align-left"
+                   tooltiptext="&alignLeft.label;"
+                   oncommand="goDoCommand('cmd-align-left')"/>
+    <toolbarbutton class="celtx-align-center"
+                   tooltiptext="&alignCenter.label;"
+                   oncommand="goDoCommand('cmd-align-center')"/>
+    <toolbarbutton class="celtx-align-right"
+                   tooltiptext="&alignRight.label;"
+                   oncommand="goDoCommand('cmd-align-right')"/>
+    <toolbarbutton class="celtx-align-justify"
+                   tooltiptext="&alignJustified.label;"
+                   oncommand="goDoCommand('cmd-align-justify')"/>
+    <toolbarseparator/>
+    <toolbarbutton class="celtx-toggle-ul"
+                   tooltiptext="&unorderedList.label;"
+                   command="cmd-toggle-ul"/>
+    <toolbarbutton class="celtx-toggle-ol"
+                   tooltiptext="&orderedList.label;"
+                   command="cmd-toggle-ol"/>
+    <toolbarbutton class="celtx-decrease-indent"
+                   tooltiptext="&decreaseIndentCmd.tooltip;"
+                   command="cmd-decrease-indent"/>
+    <toolbarbutton class="celtx-increase-indent"
+                   tooltiptext="&increaseIndentCmd.tooltip;"
+                   command="cmd-increase-indent"/>
+    <toolbarseparator />
+  </toolbar>
+  </toolbox>
+  <outliner id="editor"
+            editortype="html"
+            type="content"
+            context="outliner-context"
+            flex="1"/>
+
+</window>
+

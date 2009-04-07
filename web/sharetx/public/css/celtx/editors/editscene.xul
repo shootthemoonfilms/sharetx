@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd">
+%celtxDTD;
+]>
+
+<?xml-stylesheet href="chrome://celtx/skin/" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        title="&editSceneDialog.title;"
+        onload="loaded()"
+        ondialogaccept="accepted()"
+        ondialogcancel="canceled()">
+
+
+<script type="application/x-javascript"
+        src="chrome://global/content/globalOverlay.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/macWindowMenu.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsDragAndDrop.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/nsTransferable.js"/>
+<script type="application/x-javascript"
+        src="chrome://global/content/printUtils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/util.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/domutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/guiutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfutils.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/rdfmodel.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/itemtree.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/projectManager.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/project.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/mediamgr.js"/>
+<script type="application/x-javascript"
+        src="chrome://celtx/content/app.js"/>
+  <script type="application/x-javascript"
+          src="chrome://celtx/content/editors/editscene.js"/>
+
+  <popupset>
+    <popup id="intextpopup"
+           hidden="true">
+      <description>&intextWarning.label;</description>
+    </popup>
+    <popup id="daynightpopup"
+           hidden="true">
+      <description>&daynightWarning.label;</description>
+    </popup>
+  </popupset>
+
+  <groupbox flex="1">
+    <caption id="scenecaption"/>
+    <grid>
+      <columns>
+        <column/>
+        <column flex="1"/>
+      </columns>
+      <rows>
+        <row>
+          <label value="&intextHeader.label;&colon;"/>
+          <label id="intext"/>
+        </row>
+        <row>
+          <label value="&setting.label;&colon;"/>
+          <label id="setting"/>
+        </row>
+        <row>
+          <label value="&daynightHeader.label;&colon;"/>
+          <label id="daynight"/>
+        </row>
+        <row>
+          <label value="&description.label;&colon;"/>
+          <textbox id="description"
+                   multiline="true"
+                   width="300"
+                   rows="3"/>
+        </row>
+        <row>
+          <label value="&eighths.label;&colon;"/>
+          <hbox align="center"
+                pack="start">
+            <textbox id="eighths_integral"
+                     width="30"/>
+            <separator/>
+            <textbox id="eighths_fractional"
+                     width="20"/>
+            <label value="/ &eighthsSuffix.label;"/>
+          </hbox>
+        </row>
+        <row>
+          <label value="&scriptDay.label;&colon;"/>
+          <hbox pack="start">
+            <textbox id="scriptday"
+                     width="30"/>
+          </hbox>
+        </row>
+        <row>
+          <label value="&scheduled.label;&colon;"/>
+          <label id="scheduled"/>
+        </row>
+        <row>
+          <label value="&completed.label;&colon;"/>
+          <label id="completed"/>
+        </row>
+      </rows>
+    </grid>
+  </groupbox>
+</dialog>

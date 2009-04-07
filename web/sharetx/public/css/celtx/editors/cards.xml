@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd">
+%celtxDTD;
+]>
+
+<bindings id="cardbindings"
+          xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="mediacard"
+           extends="chrome://mozapps/content/shared/richview.xml#richview-item">
+    <content>
+      <xul:hbox flex="1">
+        <xul:image xbl:inherits="src=image"/>
+        <xul:vbox flex="1"
+                  pack="start">
+          <xul:editlabel anonid="item-label"
+                         xbl:inherits="value=label"/>
+          <xul:editlabel anonid="item-desc"
+                         multiline="true"
+                         rows="2"
+                         xbl:inherits="value=description"/>
+        </xul:vbox>
+      </xul:hbox>
+    </content>
+  </binding>
+
+  <binding id="shotcard">
+    <content>
+      <xul:vbox align="center"
+                pack="start"
+                flex="1">
+        <xul:stack>
+          <xul:image xbl:inherits="src=image"
+                     class="shotimg"/>
+          <xul:hbox class="shotoverlay" align="start" pack="end">
+            <xul:toolbar>
+              <xul:toolbarbutton label="X"
+                                 oncommand="onDeleteCell(event)"/>
+            </xul:toolbar>
+          </xul:hbox>
+        </xul:stack>
+        <xul:hbox flex="1">
+          <xul:label xbl:inherits="value=poslabel"/>
+          <xul:editlabel anonid="shotlabel"
+                         multiline="true"
+                         rows="3"
+                         flex="1"
+                         tooltiptext="&editlabel.tooltip;"
+                         xbl:inherits="value=label"/>
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+    <implementation>
+      <property name="value">
+        <getter>
+          return document.getAnonymousElementByAttribute(this, "anonid",
+            "shotlabel").value;
+        </getter>
+      </property>
+      <property name="editlabel">
+        <getter>
+          return document.getAnonymousElementByAttribute(this, "anonid",
+            "shotlabel");
+        </getter>
+      </property>
+    </implementation>
+  </binding>
+
+  <binding id="shotholder">
+    <content>
+      <xul:vbox pack="center"
+                align="center"
+                flex="1">
+        <xul:description>&shotholder.label;</xul:description>
+      </xul:vbox>
+    </content>
+  </binding>
+
+</bindings>

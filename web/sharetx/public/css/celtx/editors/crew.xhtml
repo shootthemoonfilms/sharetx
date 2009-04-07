@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" [
+
+<!ENTITY % celtxDTD SYSTEM "chrome://celtx/locale/celtx.dtd">
+%celtxDTD;
+
+]>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>&form.crewProfile;</title>
+<style>
+
+@import url(chrome://celtx/content/editors/datasheet.css);
+@import url(chrome://celtx/content/editors/editors.css);
+
+body {
+margin: 20px;
+font-family: helvetica, arial, verdana;
+font-size: 12px;
+}
+textarea {
+height:100px;
+width: 90%;
+}
+input, textarea {
+font-size: 12px;
+font-family: helvetica, arial, verdana;
+padding: 2px 1px;
+}
+input {
+
+}
+.select input {
+width: 15px;
+}
+p {
+float: left;
+width: 50%;
+margin: 5px 0px;
+}
+td {
+width: 50%;
+margin: 5px 0px;
+vertical-align:top;
+}
+br {
+clear: both;
+}
+
+.container {
+margin-bottom: 15px;
+}
+
+.container1 {
+margin-bottom: 15px;
+width: 48%;
+float:left;
+margin-right:2%;
+}
+
+.container2 {
+margin-bottom: 15px;
+width: 50%;
+float:left;
+}
+
+.container2 p {
+width:100%;
+}
+
+.container2 textarea {
+height:78px;
+width: 90%;
+font-family: helvetica, arial, verdana;
+font-size: 12px;
+padding: 1px;
+}
+
+.scene {
+  background-color: #FF9;
+  border: 1px solid #C93;
+  padding: 5px 2px 5px 10px;
+  font-weight: normal;
+  -moz-border-radius-topleft: 6px;
+  -moz-border-radius-topright: 6px;
+}
+
+.contents {
+  border: 1px solid #C93;
+  border-top: 0px;
+  background-color: #FFFFFF;
+  -moz-border-radius-bottomleft: 6px;
+  -moz-border-radius-bottomright: 6px;
+  padding: 8px 6px 8px 24px;
+}
+.print {
+display:none;
+}
+
+@media print {
+.print{
+display: inline;
+width:90%;
+}
+textarea {
+display:none;
+}
+input {
+display:none;
+}
+.hide {
+display: none;
+}
+.button {
+display:inline;
+}
+}
+</style>
+
+<script type="application/x-javascript"
+        src="chrome://celtx/content/editors/datasheet.js" />
+
+</head>
+<body>
+<form>
+
+<div class="container0">
+  <div class="scene">
+    <span style="font-weight:bold;">&form.crewProfile;&colon; </span> <span> <input type="text" id="name" name="title" style="width:35%;"/><div class="print"></div></span> <span style="font-weight:bold;padding-left: 3%;">&tags.label;&colon; </span> <span> <input type="text" id="tags" name="tags" style="width:35%;"/><div class="print"></div></span>
+  </div>
+  <div class="contents">
+  <table width="100%">
+  <tr><td>&form.fullName;&colon;</td><td>&form.media;&colon;</td></tr>
+  <tr><td>
+    <input type="text" name="crewFullName" style="width: 95%;" /><div class="print"></div><br />
+    <p>&department.label;&colon;</p><br />
+    <input type="text" name="crewDepartment" style="width: 95%;" /><div class="print"></div><br />
+    <p>&form.jobTitle;</p><br />
+    <input type="text" name="crewJobTitle" style="width: 95%;" /><div class="print"></div><br /></td>
+    <td><medialist name="media"></medialist></td></tr>
+  </table>
+    <br />
+  </div>
+</div>
+
+<br/>
+
+<div class="container">
+  <div class="scene">
+    <a href="javascript: expandCollapse('toggle-4', 'expand-4');">
+      <img id="toggle-4" class="plusminus" alt="expand"
+           src="chrome://celtx/skin/minus.png" />
+    </a>
+    <span style="font-weight:bold;">&form.inScenes;</span>
+  </div>
+  <div id="expand-4" class="contents">
+    <p>&form.inScenes;&colon;<br />
+    <textarea type="text" id="scenesUsed" name="scenesUsed" readonly="true"></textarea><div class="print"></div></p>
+    <br/>
+  </div>
+</div>
+
+<div class="container">
+  <div class="scene">
+    <a href="javascript: expandCollapse('toggle-2', 'expand-2');">
+      <img id="toggle-2" class="plusminus" alt="expand"
+           src="chrome://celtx/skin/minus.png" />
+    </a>
+    <span style="font-weight:bold;">&form.availability;</span>
+  </div>
+  <div id="expand-2" class="contents">
+    <p>&form.startDate;&colon;<br />
+    <input type="text" name="startDate" style="width:90%;"/><div class="print"></div></p>
+    <p>&form.endDate;&colon;<br />
+    <input type="text" name="endDate" style="width:90%;"/><div class="print"></div></p>
+    <br/>
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="scene">
+    <a href="javascript: expandCollapse('toggle-3', 'expand-3');">
+    <img id="toggle-3" class="plusminus" alt="expand"
+         src="chrome://celtx/skin/minus.png" />
+    </a>
+    <span style="font-weight:bold;">&form.contactInfo;</span>
+  </div>
+  <div id="expand-3" class="contents">
+    <p>&form.name;&colon;<br />
+    <input type="text" name="contact-name" style="width:90%;"/><div class="print"></div></p>
+    <p>&form.email;&colon;<br />
+    <input type="text" name="contact-email" style="width:90%;"/><div class="print"></div></p>
+    <br />
+    <p>&form.phone;&colon;<br />
+    <input type="text" name="contact-phone" style="width:90%;"/><div class="print"></div></p>
+    <p>&form.cell;&colon;<br />
+    <input type="text" name="contact-cell" style="width:90%;"/><div class="print"></div></p>
+    <br />
+    <p>&form.address;&colon;<br />
+    <textarea type="text" name="contact-address" /><div class="print"></div></p> 
+    <p>&form.comments;&colon;<br />
+    <textarea type="text" name="contact-comments" /><div class="print"></div></p>
+    <br />
+    <p>&form.crewLink;&colon;<br />
+    <input type="siteLink" name="role" style="width:90%;"/><div class="print"></div></p>
+    <br />
+  </div>
+</div>
+
+</form>
+</body>
+
+</html>

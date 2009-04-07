@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version="1.0">
+
+  <xsl:output method="html" version="4.0" encoding="UTF-8"/>
+
+  <xsl:param name="fileprefix"></xsl:param>
+  <xsl:param name="orientation">portrait</xsl:param>
+
+  <xsl:template match="storyboard">
+    <html>
+      <head>
+        <title>Storyboard (<xsl:value-of select="$orientation"/>)</title>
+        <link rel="stylesheet"
+              href="chrome://celtx/content/editors/storyboard.css"
+              type="text/css"/>
+      </head>
+      <body orientation="{$orientation}">
+        <xsl:choose>
+          <xsl:when test="$orientation = 'landscape'">
+            <xsl:apply-templates select="sequence" mode="landscape"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates select="sequence" mode="portrait"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template match="sequence" mode="landscape">
+    <xsl:variable name="seqnum" select="position()"/>
+    <xsl:variable name="seqtitle" select="@title"/>
+    <xsl:for-each select="shot[position() mod 3 = 1]">
+      <!-- Repeat the sequence header at the start of each page -->
+      <xsl:if test="position() mod 3 = 1">
+        <div class="sequence">
+          <xsl:value-of select="concat($seqnum, '. ', $seqtitle)"/>
+        </div>
+      </xsl:if>
+      <xsl:call-template name="shot">
+        <xsl:with-param name="seqnum" select="$seqnum"/>
+        <xsl:with-param name="shot" select="."/>
+        <xsl:with-param name="shotnum" select="position() * 3 - 2"/>
+      </xsl:call-template>
+      <xsl:variable name="second"
+                    select="following-sibling::shot[position()=1]"/>
+      <xsl:if test="$second">
+        <xsl:call-template name="shot">
+          <xsl:with-param name="seqnum" select="$seqnum"/>
+          <xsl:with-param name="shot" select="$second"/>
+          <xsl:with-param name="shotnum" select="position() * 3 - 1"/>
+        </xsl:call-template>
+      </xsl:if>
+      <xsl:variable name="third"
+                    select="following-sibling::shot[position()=2]"/>
+      <xsl:if test="$third">
+        <xsl:call-template name="shot">
+          <xsl:with-param name="seqnum" select="$seqnum"/>
+          <xsl:with-param name="shot" select="$third"/>
+          <xsl:with-param name="shotnum" select="position() * 3"/>
+        </xsl:call-template>
+      </xsl:if>
+      <br style="clear: both;"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="sequence" mode="portrait">
+    <xsl:variable name="seqnum" select="position()"/>
+    <xsl:variable name="seqtitle" select="@title"/>
+    <xsl:for-each select="shot[position() mod 2 = 1]">
+      <!-- Repeat the sequence header at the start of each page -->
+      <xsl:if test="position() mod 3 = 1">
+        <div class="sequence">
+          <xsl:value-of select="concat($seqnum, '. ', $seqtitle)"/>
+        </div>
+      </xsl:if>
+      <xsl:call-template name="shot">
+        <xsl:with-param name="seqnum" select="$seqnum"/>
+        <xsl:with-param name="shot" select="."/>
+        <xsl:with-param name="shotnum" select="position() * 2 - 1"/>
+      </xsl:call-template>
+      <xsl:variable name="second"
+                    select="following-sibling::shot[position()=1]"/>
+      <xsl:if test="$second">
+        <xsl:call-template name="shot">
+          <xsl:with-param name="seqnum" select="$seqnum"/>
+          <xsl:with-param name="shot" select="$second"/>
+          <xsl:with-param name="shotnum" select="position() * 2"/>
+        </xsl:call-template>
+      </xsl:if>
+      <br style="clear: both;"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="shot">
+    <xsl:param name="seqnum"/>
+    <xsl:param name="shot"/>
+    <xsl:param name="shotnum"/>
+    <td>
+      <div class="shotcontainer">
+        <img src="{$fileprefix}{$shot/@image}"/>
+        <br/>
+        <xsl:value-of select="concat($seqnum, '.', $shotnum, ' ', $shot/@title)"/>
+      </div>
+    </td>
+  </xsl:template>
+
+</xsl:stylesheet>
