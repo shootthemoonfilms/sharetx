@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>myCeltx.com</title>
+    <title>sharetx.com</title>
     <link rel="stylesheet" type="text/css" href="/css/themes/default.css" />
     <link rel="stylesheet" type="text/css" href="/css/themes/mac_os_x.css" />
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
