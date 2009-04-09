@@ -22,6 +22,8 @@
         <button id="share"><img src="/img/toolbar/share.png" /><div>Share</div></button>
         <div class="separator"></div>
         <button id="preferences"><img src="/img/toolbar/preferences.png" /><div>Preferences</div></button>
+        <div class="separator"></div>
+        <button id="logout"><img src="/img/toolbar/logout.png" /><div>Logout</div></button>
     </div>
 
     <div id="workarea">

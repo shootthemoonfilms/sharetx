@@ -6,7 +6,7 @@
 var Toolbar = {
     init: function() {
         $$("#toolbar button").each(function(e) {
-            if (["new", "open", "preferences"].indexOf(e.id) == -1) {
+            if (["new", "open", "preferences", "logout"].indexOf(e.id) == -1) {
                 e.setAttribute("disabled", "disabled");
             } else {
                 e.disabled = false;
@@ -15,7 +15,7 @@ var Toolbar = {
     
         Event.observe("new", "click", function() {
             Dialog.confirm(new Element("iframe", {
-                style: "width: 100%; height: 75px; border: none",
+                style: "width: 100%; height: 70px; border: none",
                 src: "/dialogs/new.html",
                 id: "iframe_new"
             }), {
@@ -35,7 +35,7 @@ var Toolbar = {
                 }
             });
         });
-    
+
         Event.observe("open", "click", function() {
             new Window({
                 className: "mac_os_x",
@@ -44,22 +44,27 @@ var Toolbar = {
                 destroyOnClose: true
             }).setAjaxContent("/user/projects", { method: "get" }, true, true);
         });
-    
+
         Event.observe("download", "click", function() {
     
         });
     
         Event.observe("upload", "click", function() {
-            Dialog.confirm({
-                url: "/dialogs/upload.html",
-                options: { method: "get" }
-            }, {
+            Dialog.confirm(new Element("iframe", {
+                style: "width: 100%; height: 175px; border: none",
+                src: "/dialogs/upload.html",
+                id: "iframe_new"
+            }), {
                 className: "mac_os_x",
                 title: "Upload new version",
                 width: 400,
-                height: 80,
+                height: "auto",
                 destroyOnClose: true,
-                okLabel: "Upload"
+                okLabel: "Upload",
+                onShow: function(e) {
+                    $(this.id + "_content").style.height = "auto";
+                    $(this.id + "_content").style.overflow = "hidden";
+                }
             });
         });
     
@@ -95,6 +100,10 @@ var Toolbar = {
                 width: 640,
                 destroyOnClose: true
             }).setAjaxContent("/dialogs/preferences.html", { method: "get" }, true, true);
+        });
+
+        Event.observe("logout", "click", function() {
+            document.location.href = "/user/logout";
         });
     }
 };

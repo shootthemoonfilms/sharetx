@@ -1,36 +1,29 @@
 """The application's model objects"""
+
+import hmac
+
 import sqlalchemy as sa
 from sqlalchemy import orm
+from sqlalchemy.ext.declarative import declarative_base
 
 from sharetx.model import meta
 
+_Base = declarative_base()
+
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""
-    ## Reflected tables must be defined and mapped here
-    #global reflected_table
-    #reflected_table = sa.Table("Reflected", meta.metadata, autoload=True,
-    #                           autoload_with=engine)
-    #orm.mapper(Reflected, reflected_table)
-    #
+
     meta.Session.configure(bind=engine)
     meta.engine = engine
 
 
-## Non-reflected tables may be defined and mapped at module level
-#foo_table = sa.Table("Foo", meta.metadata,
-#    sa.Column("id", sa.types.Integer, primary_key=True),
-#    sa.Column("bar", sa.types.String(255), nullable=False),
-#    )
-#
-#class Foo(object):
-#    pass
-#
-#orm.mapper(Foo, foo_table)
+class User(_Base):
+    __tablename__ = "users"
 
+    id = sa.Column(sa.types.Integer, primary_key=True)
+    username = sa.Column(sa.types.String)
+    password = sa.Column(sa.types.String)
+    email = sa.Column(sa.types.String)
 
-## Classes for reflected tables may be defined here, but the table and
-## mapping itself must be done in the init_model function
-#reflected_table = None
-#
-#class Reflected(object):
-#    pass
+    def enc(self, password):
+        return hmac.new(self.username, password).hexdigest()

@@ -4,6 +4,8 @@
 <head>
     <title>sharetx.com</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <script type="text/javascript">var hash='${c.hash}';</script>
+    <script type="text/javascript" src="/js/include.js?prototype,sharetx.home">var hash='${c.hash}';</script>
 </head>
 
 <body class="index">
@@ -11,27 +13,36 @@
         <a href="/"><img src="/logo.png" /></a>
     </div>
 
-    <div>Share your <a href="http://www.celtx.org">celtx</a> scripts for free!</div>
+    <div>Share your <a href="http://www.celtx.com" target="_blank">celtx</a> scripts for free!</div>
 
     <div id="access">
-        <p>${c.message}</p>
+        <ul id="tabs">
+            <li id="login_tab">Login</li>
+            <li id="create_tab">Create Account</li>
+            <li id="reset_tab">Reset Password</li>
+        </ul>
+        <p class="${c.message_class}">${c.message}</p>
 
-        <form action="/user/access" method="post">
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" />
+        <form method="post" id="access_form">
+            <label for="username" id="username_label">Username:</label>
+            <input type="text" name="username" id="username" value="${c.username}" />
 
-            <label for="password">Password:</label>
+            <label for="password" id="password_label">Password:</label>
             <input type="password" name="password" id="password" />
-    
+
             <input type="checkbox" name="remember" id="remember" />
-            <label for="remember">Remember me</label>
-    
-            <button type="submit" name="action" value="login">Login</button>
+            <label for="remember" id="remember_label">Remember me</label>
 
-            <label for="email">Email:</label>
-            <input type="text" name="email" id="email" />
+            <button type="submit" name="action" id="login" value="login">Login</button>
 
-            <button type="submit" name="action" value="create">Create Account</button>
+            <label for="password_confirmation" id="password_confirmation_label">Confirm:</label>
+            <input type="password" name="password_confirmation" id="password_confirmation" />
+
+            <label for="email" id="email_label">Email:</label>
+            <input type="text" name="email" id="email" value="${c.email}" />
+
+            <button type="submit" name="action" id="create" value="create">Create Account</button>
+            <button type="submit" name="action" id="reset" value="reset">Reset Password</button>
         </form>
     </div>
 </body>
