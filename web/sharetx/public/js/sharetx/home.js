@@ -35,5 +35,6 @@ Event.observe(window, "load", function() {
     Event.observe("create_tab", "click", home_show.curry("create", false));
     Event.observe("reset_tab", "click", home_show.curry("reset", false));
 
+    $("access_form").show();
     home_show(hash || "login", true);
 });

@@ -22,10 +22,10 @@ def make_map():
     map.connect('user', '/', controller='user_', action='home')
     map.connect('user', '/user/{action}', controller='user_')
 
-    map.connect('project', '/project/:name/{action}', controller='project')
-    map.connect('project', '/project/:name/:revision/{action}', controller='project')
-    map.connect('project', '/project/:name/:revision/{action}/:file', controller='project')
-    map.connect('project', '/project/:name/:revision/share/:subaction', controller='project', action="share")
+    map.connect('project', '/project/:uri/{action}', controller='project')
+    map.connect('project', '/project/:uri/:revision/{action}', controller='project')
+    map.connect('project', '/project/:uri/:revision/{action}/:file', controller='project')
+    map.connect('project', '/project/:uri/:revision/share/:subaction', controller='project', action="share")
 
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')

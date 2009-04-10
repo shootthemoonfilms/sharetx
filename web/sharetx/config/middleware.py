@@ -1,4 +1,7 @@
 """Pylons middleware initialization"""
+
+import os
+
 from beaker.middleware import CacheMiddleware, SessionMiddleware
 from paste.cascade import Cascade
 from paste.registry import RegistryManager
@@ -10,6 +13,8 @@ from pylons.wsgiapp import PylonsApp
 from routes.middleware import RoutesMiddleware
 
 from sharetx.config.environment import load_environment
+
+from gp.fileupload import FileUpload
 
 def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     """Create a Pylons WSGI application and return it
@@ -46,6 +51,11 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     app = CacheMiddleware(app, config)
 
     # CUSTOM MIDDLEWARE HERE (filtered by error handling middlewares)
+
+    tempdir = os.path.join(config['pylons.cache_dir'], 'fileupload')
+    if not os.path.exists(tempdir):
+        os.makedirs(tempdir)
+    app = FileUpload(app, tempdir=tempdir, max_size=None)
 
     if asbool(full_stack):
         # Handle Python exceptions

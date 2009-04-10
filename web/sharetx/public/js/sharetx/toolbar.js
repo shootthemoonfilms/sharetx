@@ -14,26 +14,15 @@ var Toolbar = {
         });
     
         Event.observe("new", "click", function() {
-            Dialog.confirm(new Element("iframe", {
-                style: "width: 100%; height: 70px; border: none",
-                src: "/dialogs/new.html",
-                id: "iframe_new"
-            }), {
+            new Window({
                 className: "mac_os_x",
-                title: "New project",
+                title: "Upload new project",
                 width: 400,
-                resizable: false,
                 destroyOnClose: true,
-                onLabel: "Create",
-                onOk: function() {
-                    Event.observe("iframe_new", "load", function(e) {
-                        Windows.getFocusedWindow().close();
-                    });
-
-                    $("iframe_new").contentWindow.submit();
-                    return false;
-                }
-            });
+                resizable: false,
+                maximizable: false,
+                minimizable: false
+            }).setAjaxContent("/project/new", { method: "get" }, true, true);
         });
 
         Event.observe("open", "click", function() {

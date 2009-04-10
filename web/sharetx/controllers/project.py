@@ -3,46 +3,61 @@ import logging
 import os, os.path
 import subprocess
 import shutil
-from zipfile import ZipFile
+from zipfile import ZipFile, is_zipfile
 from tempfile import mkdtemp
 import StringIO
-from urllib import quote_plus, unquote_plus
 from datetime import datetime
+import uuid
 
 from bzrlib.workingtree import WorkingTree
 from bzrlib.branch import Branch
 from bzrlib.bzrdir import BzrDir
 
-from rdflib import Namespace
+from rdflib import Namespace, RDF
 from rdflib.Graph import Graph, Literal, URIRef
 
 from pylons import request, response, session, config, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to
 
-from sharetx.lib.base import BaseController, render, MicroMock
+from sharetx.lib.base import BaseController, render, MicroMock, req, userdir
 
 log = logging.getLogger(__name__)
-dc = Namespace('http://purl.org/dc/elements/1.1/')
-cx = Namespace('http://celtx.com/NS/v1/')
 
 class ProjectController(BaseController):
 
     def __before__(self):
+        self.zipfile = None
+        self.pv = None
+
         if not 'username' in session:
             raise 'FIXME: no username'
 
-    def filelist(self, name, revision):
-        pv = ProjectVersioning(name, revision)
+        if 'project_file' in request.POST:
+            uploaded_project = request.POST['project_file']
+            self.zipfile = ZipFile(uploaded_project.file, 'r')
+
+    def __after__(self):
+        if self.zipfile:
+            self.zipfile.close()
+
+        if self.pv:
+            self.pv.cleanup()
+
+    #################################
+    # Work without an upload
+
+    def filelist(self, uri, revision):
+        pv = ProjectVersioning(uri, revision)
 
         c.files = pv.filelist()
 
         return render('/project/filelist.mako')
 
-    def info(self, name, revision):
-        pv = ProjectVersioning(name)
+    def info(self, uri, revision):
+        pv = ProjectVersioning(uri, revision)
         rev = pv.last_revision()
 
-        c.name = unquote_plus(name)
+        c.name = pv.project.projectname()
         # FIXME timezone
         c.last_modified = datetime.fromtimestamp(rev.timestamp).replace(microsecond=0)
         c.last_author = ', '.join(rev.get_apparent_authors())
@@ -52,64 +67,54 @@ class ProjectController(BaseController):
 
         return render('/project/info.mako')
 
-    def history(self, name, revision):
-        pv = ProjectVersioning(name, revision)
+    def history(self, uri, revision):
+        pv = ProjectVersioning(uri, revision)
 
         # TODO populate history
 
         return render('/project/history.mako')
 
-    def file(self, name, revision, file):
-        pv = ProjectVersioning(name, revision)
+    def file(self, uri, revision, file):
+        pv = ProjectVersioning(uri, revision)
 
         return pv.readfile(file)
 
-    #################################
-    # Versioning
+    def revision(self, uri):
+        return str(ProjectVersioning(uri).last_revision_number())
 
-    def _param(self, p, default):
-        if p in request.params:
-            return request.params[p]
-        else:
-            return default
+    def download(self, uri):
+        pv = ProjectVersioning(uri)
+
+        return pv.package()
+
+    #################################
+    # Work with an upload
 
     def new(self):
-        name = request.params['project_name']
-        message = self._param('m', 'New Project')
-        pv = ProjectVersioning(name, new=True)
+        if request.method == 'POST':
+            pv = ProjectVersioning(self.zipfile, new=True)
+    
+            pv.checkin(req('m', 'New Project'))
 
-        pv.extract()
-        pv.checkin(message)
+            return "OK %s" % pv.uri
+        else:
+            return render('/dialogs/new.mako')
 
-        return "OK"
+    def upload(self):
+        message = req('m', 'Upload Project')
+        pv = ProjectVersioning(self.zipfile)
 
-    def upload(self, name):
-        message = self._param('m', 'Upload Project')
-        pv = ProjectVersioning(name)
-
-        pv.extract()
         pv.update()
         pv.checkin(message)
 
         return pv.package()
 
-    def update(self, name):
-        pv = ProjectVersioning(name)
+    def update(self):
+        pv = ProjectVersioning(self.zipfile)
 
-        pv.extract()
         pv.update()
 
         return pv.package()
-
-    def download(self, name):
-        pv = ProjectVersioning(name)
-
-        pv.checkout()
-
-        return pv.package()
-
-    def revision(self, name):
-        return str(ProjectVersioning(name).last_revision_number())
 
     #################################
     # Share
@@ -121,33 +126,73 @@ class ProjectController(BaseController):
         return render('/project/share.mako')
 
 
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+
 class ProjectVersioning(object):
 
-    def __init__(self, name, revision=None, new=False):
-        self.name = name
+    def __init__(self, source, revision=None, new=False):
         self.revision = revision and int(revision)
         self.new = new
+        self.project = None
+        self.uri = None
+        self.zipfile = None
 
-        self.branch_path = os.path.join(config['pylons.cache_dir'],
-                                        'projects',
-                                        quote_plus(session['username']),
-                                        quote_plus(self.name))
+        if isinstance(source, basestring):
+            self.uri = source
+        elif isinstance(source, ZipFile):
+            self.zipfile = source
+            if new:
+                self.uri = str(uuid.uuid1())
+            else:
+                self.uri = self.zipfile.read('uri')
+
+        if not self.uri:
+            raise "URI not found", source
+
         self.checkout_path = mkdtemp()
+        self.branch_path = os.path.join(userdir(session['username']), self.uri)
 
         if self.new:
             if os.path.exists(self.branch_path):
-                raise 'Project already exists'
+                raise 'Project already exists', self.branch_path
     
             os.makedirs(self.branch_path)
             self.branch = BzrDir.create_branch_convenience(self.branch_path)
         else:
             self.branch = Branch.open(self.branch_path)
 
+        if self.new:
+            self.checkout()
+            self._save('uri', self.uri)
+            self.extract()
+        elif self.zipfile:
+            self.extract()
+        else:
+            self.checkout()
+
+        self.project = CeltxRDFUtils(self.checkout_path)
+
+    def _save(self, file, data):
+        path = os.path.join(self.checkout_path, file)
+        f = open(path, 'w')
+        f.write(data)
+        f.close()
+        self.wt.add(file)
+
+    def checkout(self, revision=None):
+        """ Checks out a project in a specific revision """
+
+        self.branch.create_checkout(self.checkout_path, lightweight=True)
+        self.wt = WorkingTree.open(self.checkout_path)
+
     def extract(self):
         """ Extracts a project """
 
         if self.new:
-            self.checkout()
             self._extract()
         else:
             self._extract()
@@ -158,21 +203,11 @@ class ProjectVersioning(object):
                 self.wt.add(name)
 
     def _extract(self):
-        uploaded_project = request.POST['project_file']
-
-        z = ZipFile(uploaded_project.file, 'r')
-        for name in z.namelist():
+        for name in self.zipfile.namelist():
             path = os.path.join(self.checkout_path, name)
             f = open(path, 'w')
-            f.write(z.read(name))
+            f.write(self.zipfile.read(name))
             f.close()   
-        z.close()
-
-    def checkout(self, revision=None):
-        """ Checks out a project in a specific revision """
-
-        self.branch.create_checkout(self.checkout_path, lightweight=True)
-        self.wt = WorkingTree.open(self.checkout_path)
 
     def update(self, message):
         """ Updates the working tree """
@@ -182,7 +217,7 @@ class ProjectVersioning(object):
     def checkin(self, message):
         """ Checks in the project """
 
-        self.wt.commit(message=message, author=session['username'])
+        self.wt.commit(message=message, authors=[session['username']])
 
     def package(self):
         """ Package a project and return it to celtx """
@@ -222,38 +257,61 @@ class ProjectVersioning(object):
         """ Returns the list of files for the project """
 
         # TODO use RevisionTree to make this process faster
-        self.checkout()
 
-        return CeltxRDFUtils(self.checkout_path).filelist()
-
+        return self.project.filelist()
 
     def readfile(self, file):
         """ Returns the contents of a file """
 
         # TODO use RevisionTree to make this process faster
-        self.checkout()
 
         f = open(os.path.join(self.checkout_path, file))
         contents = f.read()
 
-        if CeltxRDFUtils(self.checkout_path).fileinfo(file).doctype == cx["ScriptDocument"]:
+        if self.project.fileinfo(file).doctype == cx["ScriptDocument"]:
             contents = contents.replace('chrome://celtx/content/', '/css/celtx/')
 
         f.close()
 
         return contents
 
+    def cleanup(self):
+        """ Deletes the checkout """
+
+        shutil.rmtree(self.checkout_path)
+
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+
+dc = Namespace('http://purl.org/dc/elements/1.1/')
+cx = Namespace('http://celtx.com/NS/v1/')
+sx = Namespace('http://sharetx.com/NS/v1/')
 
 class CeltxRDFUtils:
 
-    def __init__(self, path):
+    def __init__(self, source):
+        if isinstance(source, ZipFile):
+            source = StringIO.StringIO(source.read('project.rdf'))
+        elif isinstance(source, basestring) and os.path.isdir(source):
+            source = os.path.join(source, 'project.rdf')
+
         self.g = Graph()
-        self.g.parse(os.path.join(path, 'project.rdf'))
+        self.g.parse(source)
+
+    def projectid(self):
+        return list(self.g.subjects(RDF.type, cx['Project']))[0]
+
+    def projectname(self):
+        return list(self.g.objects(self.projectid(), dc['title']))[0]
 
     def fileinfo(self, fileid):
         """ Returns an object with file information """
 
-        file = dict((file[1], file[2]) for file in self.g.triples((self.fileid(fileid), None, None)))
+        file = dict(self.g.predicate_objects(self.fileid(fileid)))
 
         return MicroMock(title=file[dc['title']],
                          localFile=file[cx['localFile']],
@@ -262,7 +320,8 @@ class CeltxRDFUtils:
     def filelist(self):
         """ Returns a list of files within a project """
 
-        for pred in self.g.triples((None, cx['localFile'], None)):
+        # FIXME read project and contents from rdf don't just add all files
+        for pred in self.g.subject_objects(cx['localFile']):
             yield self.fileinfo(pred[0])
 
     def fileid(self, filename):
@@ -271,4 +330,4 @@ class CeltxRDFUtils:
         if isinstance(filename, URIRef):
             return filename
         else:
-            return list(self.g.triples((None, cx['localFile'], Literal(filename))))[0][0]
+            return list(self.g.subjects(cx['localFile'], Literal(filename)))[0]

@@ -75,8 +75,16 @@ body.index {
     cursor: default;
 }
 
+#access li:hover {
+    background-color: #ddbb99;
+}
+
 #access li.active {
     background-color: #ffcc99;
+}
+
+#access li.active:hover {
+    background-color: #ffddaa;
 }
 
 #access form {
@@ -121,9 +129,14 @@ body.index {
     border: 0;
     padding: 3px;
     font-size: medium;
+    color: #884433;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
+}
+
+#access button:hover {
+    background-color: #ffddaa;
 }
 
 #access p {
@@ -392,7 +405,22 @@ body.index {
 .dialog button {
     display: block;
     margin: 10px 0;
-    margin-left: 105px;
+    margin-left: 100px;
+}
+
+.dialog .progress {
+    margin: 10px 0;
+    margin-left: 100px;
+    width: 250px;
+    height: 20px;
+    background-color: #eeeeee;
+    border: 1px solid #bbbbbb;
+}
+
+.dialog .progress .bar {
+    background-color: #99ccff;
+    width: 0%;
+    height: 100%;
 }
 
 /********************************************************

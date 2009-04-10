@@ -12,18 +12,18 @@
 <body>
     <div id="toolbar">
         <a href="/"><img src="/logo.png" /></a>
-        <button id="new"><img src="/img/toolbar/new.png" /><div>New</div></button>
-        <button id="open"><img src="/img/toolbar/open.png" /><div>Open</div></button>
+        <button id="new" title="Upload new project"><img src="/img/toolbar/new.png" /><div>New</div></button>
+        <button id="open" title="Open existing project"><img src="/img/toolbar/open.png" /><div>Open</div></button>
         <div class="separator"></div>
-        <button id="download"><img src="/img/toolbar/download.png" /><div>Download</div></button>
-        <button id="upload"><img src="/img/toolbar/upload.png" /><div>Upload</div></button>
-        <button id="update"><img src="/img/toolbar/update.png" /><div>Update</div></button>
-        <button id="history"><img src="/img/toolbar/history.png" /><div>History</div></button>
-        <button id="share"><img src="/img/toolbar/share.png" /><div>Share</div></button>
+        <button id="download" title="Download current project"><img src="/img/toolbar/download.png" /><div>Download</div></button>
+        <button id="upload" title="Upload new version for the current project"><img src="/img/toolbar/upload.png" /><div>Upload</div></button>
+        <button id="update" title="Update current project"><img src="/img/toolbar/update.png" /><div>Update</div></button>
+        <button id="history" title="See current project's history"><img src="/img/toolbar/history.png" /><div>History</div></button>
+        <button id="share" title="Share current project"><img src="/img/toolbar/share.png" /><div>Share</div></button>
         <div class="separator"></div>
-        <button id="preferences"><img src="/img/toolbar/preferences.png" /><div>Preferences</div></button>
+        <button id="preferences" title="Edit preferences"><img src="/img/toolbar/preferences.png" /><div>Preferences</div></button>
         <div class="separator"></div>
-        <button id="logout"><img src="/img/toolbar/logout.png" /><div>Logout</div></button>
+        <button id="logout" title="Close current session"><img src="/img/toolbar/logout.png" /><div>Logout</div></button>
     </div>
 
     <div id="workarea">

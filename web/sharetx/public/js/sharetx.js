@@ -11,6 +11,7 @@ Event.observe(window, "load", function() {
     include("sharetx.tabs");
     include("sharetx.project");
     include("sharetx.share");
+    include("sharetx.upload");
 
     Toolbar.init();
 });

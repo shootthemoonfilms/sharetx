@@ -23,7 +23,7 @@
         </ul>
         <p class="${c.message_class}">${c.message}</p>
 
-        <form method="post" id="access_form">
+        <form method="post" id="access_form" style="display: none">
             <label for="username" id="username_label">Username:</label>
             <input type="text" name="username" id="username" value="${c.username}" />
 
