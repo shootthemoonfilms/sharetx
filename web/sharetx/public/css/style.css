@@ -296,10 +296,11 @@ body.index {
 
 #right_sidebar {
     font-size: small;
-    padding: 0 10px;
+    padding: 10px;
 }
 
 #right_sidebar dl {
+    margin-top: 0;
 }
 
 #right_sidebar dl dt {
@@ -415,10 +416,15 @@ body.index {
     height: 20px;
     background-color: #eeeeee;
     border: 1px solid #bbbbbb;
+    background-image: url(../img/progress.gif);
+}
+
+.dialog .progress.active {
+    background-image: none;
 }
 
 .dialog .progress .bar {
-    background-color: #99ccff;
+    background-color: #ffcc99;
     width: 0%;
     height: 100%;
 }
@@ -456,11 +462,13 @@ body.index {
 .icon.large {
     display: inline-table;
     background-image: url(../img/celtx-icon-48x48.png);
-    background-position: 15px 5px;
-    width: 68px;
+    background-position: 26px 5px;
+    width: 100px;
     padding: 60px 5px 5px 5px;
     text-align: center;
     margin: 5px;
+    min-height: 48px;
+    overflow: hidden;
 }
 
 .icon.small {
@@ -470,6 +478,8 @@ body.index {
     width: inherit;
     padding-top: 5px;
     padding-left: 30px;
+    min-height: 24px;
+    min-width: 24px;
 }
 
 .icon.smallest {
@@ -479,6 +489,8 @@ body.index {
     width: inherit;
     padding-top: 3px;
     padding-left: 20px;
+    min-height: 16px;
+    min-width: 16px;
 }
 
 /********************************************************

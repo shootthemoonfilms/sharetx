@@ -12,12 +12,11 @@
 <body>
     <div id="toolbar">
         <a href="/"><img src="/logo.png" /></a>
-        <button id="new" title="Upload new project"><img src="/img/toolbar/new.png" /><div>New</div></button>
-        <button id="open" title="Open existing project"><img src="/img/toolbar/open.png" /><div>Open</div></button>
+        <button id="open" title="Open existing project"><img src="/img/toolbar/open.png" /><div>Projects</div></button>
+        <button id="upload" title="Upload a project"><img src="/img/toolbar/upload.png" /><div>Upload</div></button>
+        <button id="update" title="Update current project"><img src="/img/toolbar/update.png" /><div>Update</div></button>
         <div class="separator"></div>
         <button id="download" title="Download current project"><img src="/img/toolbar/download.png" /><div>Download</div></button>
-        <button id="upload" title="Upload new version for the current project"><img src="/img/toolbar/upload.png" /><div>Upload</div></button>
-        <button id="update" title="Update current project"><img src="/img/toolbar/update.png" /><div>Update</div></button>
         <button id="history" title="See current project's history"><img src="/img/toolbar/history.png" /><div>History</div></button>
         <button id="share" title="Share current project"><img src="/img/toolbar/share.png" /><div>Share</div></button>
         <div class="separator"></div>
@@ -37,6 +36,8 @@
             <div id="center_tabs_content"></div>
         </div>
     </div>
+
+    <iframe id="download_iframe" style="display:none"></iframe>
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+include("sharetx.project");
 
 ///////////////////////////////////////////////////////////
 // Toolbar
@@ -6,23 +7,11 @@
 var Toolbar = {
     init: function() {
         $$("#toolbar button").each(function(e) {
-            if (["new", "open", "preferences", "logout"].indexOf(e.id) == -1) {
+            if (["open", "upload", "update", "preferences", "logout"].indexOf(e.id) == -1) {
                 e.setAttribute("disabled", "disabled");
             } else {
                 e.disabled = false;
             }
-        });
-    
-        Event.observe("new", "click", function() {
-            new Window({
-                className: "mac_os_x",
-                title: "Upload new project",
-                width: 400,
-                destroyOnClose: true,
-                resizable: false,
-                maximizable: false,
-                minimizable: false
-            }).setAjaxContent("/project/new", { method: "get" }, true, true);
         });
 
         Event.observe("open", "click", function() {
@@ -34,42 +23,36 @@ var Toolbar = {
             }).setAjaxContent("/user/projects", { method: "get" }, true, true);
         });
 
-        Event.observe("download", "click", function() {
-    
-        });
-    
         Event.observe("upload", "click", function() {
-            Dialog.confirm(new Element("iframe", {
-                style: "width: 100%; height: 175px; border: none",
-                src: "/dialogs/upload.html",
-                id: "iframe_new"
-            }), {
+            new Window({
                 className: "mac_os_x",
-                title: "Upload new version",
+                title: "Upload new revision for project",
                 width: 400,
-                height: "auto",
+                height: 130,
                 destroyOnClose: true,
-                okLabel: "Upload",
-                onShow: function(e) {
-                    $(this.id + "_content").style.height = "auto";
-                    $(this.id + "_content").style.overflow = "hidden";
-                }
-            });
+                resizable: false,
+                maximizable: false,
+                minimizable: false
+            }).setAjaxContent("/project/upload", { method: "get" }, true, true);
         });
-    
+
         Event.observe("update", "click", function() {
-            Dialog.confirm({
-                url: "/dialogs/update.html",
-                options: { method: "get" }
-            }, {
+            new Window({
                 className: "mac_os_x",
                 title: "Update project",
                 width: 400,
-                height: 80,
+                height: 130,
                 destroyOnClose: true,
-                okLabel: "Update"
-            });
+                resizable: false,
+                maximizable: false,
+                minimizable: false
+            }).setAjaxContent("/project/update", { method: "get" }, true, true);
         });
+
+        Event.observe("download", "click", function() {
+            $("download_iframe").src = Project.requestPath("download");
+        });
+    
     
         Event.observe("history", "click", function() {
             Tabs.open("history", "History", Project.requestPath("history"));

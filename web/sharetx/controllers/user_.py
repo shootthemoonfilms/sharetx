@@ -103,10 +103,16 @@ class UserController(BaseController):
         projects = os.listdir(userdir(session['username']))
 
         c.projects = [ MicroMock(url=unquote_plus(project),
-                                 name=unquote_plus(project))
+                                 name=self._readname(project))
                       for project in projects ]
 
         return render('/user/projects.mako')
+
+    def _readname(self, project):
+        f = open(os.path.join(userdir(session['username']), project, 'name'))
+        name = f.read()
+        f.close()
+        return name
 
     def logout(self):
         if 'username' in session:

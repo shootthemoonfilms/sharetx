@@ -8,6 +8,7 @@ from tempfile import mkdtemp
 import StringIO
 from datetime import datetime
 import uuid
+from urllib import quote_plus
 
 from bzrlib.workingtree import WorkingTree
 from bzrlib.branch import Branch
@@ -46,6 +47,9 @@ class ProjectController(BaseController):
     #################################
     # Work without an upload
 
+    def revision(self, uri):
+        return str(ProjectVersioning(uri).last_revision_number())
+
     def filelist(self, uri, revision):
         pv = ProjectVersioning(uri, revision)
 
@@ -79,35 +83,30 @@ class ProjectController(BaseController):
 
         return pv.readfile(file)
 
-    def revision(self, uri):
-        return str(ProjectVersioning(uri).last_revision_number())
+    def download(self, uri, revision, url=None):
+        pv = ProjectVersioning(uri, revision)
 
-    def download(self, uri):
-        pv = ProjectVersioning(uri)
-
-        return pv.package()
+        if not url:
+            return redirect_to("%s/%s.celtx" % (request.path, quote_plus(pv.project.projectname())))
+        else:
+            response.headers['content-type'] = 'application/zip'
+            return pv.package()
 
     #################################
     # Work with an upload
 
-    def new(self):
-        if request.method == 'POST':
-            pv = ProjectVersioning(self.zipfile, new=True)
-    
-            pv.checkin(req('m', 'New Project'))
-
-            return "OK %s" % pv.uri
-        else:
-            return render('/dialogs/new.mako')
-
     def upload(self):
-        message = req('m', 'Upload Project')
-        pv = ProjectVersioning(self.zipfile)
+        if request.method != 'POST':
+            return render('/dialogs/upload.mako')
+        else:
+            pv = ProjectVersioning(self.zipfile)
+    
+            if not pv.new:
+                pv.update()
 
-        pv.update()
-        pv.checkin(message)
+            pv.checkin(req('m', 'Upload Project'))
 
-        return pv.package()
+            return pv.uri
 
     def update(self):
         pv = ProjectVersioning(self.zipfile)
@@ -134,24 +133,25 @@ class ProjectController(BaseController):
 
 class ProjectVersioning(object):
 
-    def __init__(self, source, revision=None, new=False):
+    def __init__(self, source, revision=None):
         self.revision = revision and int(revision)
-        self.new = new
         self.project = None
         self.uri = None
+        self.new = False
         self.zipfile = None
 
         if isinstance(source, basestring):
             self.uri = source
         elif isinstance(source, ZipFile):
             self.zipfile = source
-            if new:
-                self.uri = str(uuid.uuid1())
-            else:
+            try:
                 self.uri = self.zipfile.read('uri')
+            except KeyError:
+                self.uri = str(uuid.uuid1())
+                self.new = True
 
         if not self.uri:
-            raise "URI not found", source
+            raise 'URI not found', source
 
         self.checkout_path = mkdtemp()
         self.branch_path = os.path.join(userdir(session['username']), self.uri)
@@ -167,8 +167,9 @@ class ProjectVersioning(object):
 
         if self.new:
             self.checkout()
-            self._save('uri', self.uri)
             self.extract()
+            self._save(os.path.join(self.checkout_path, 'uri'), self.uri)
+            self.wt.add('uri')
         elif self.zipfile:
             self.extract()
         else:
@@ -176,12 +177,10 @@ class ProjectVersioning(object):
 
         self.project = CeltxRDFUtils(self.checkout_path)
 
-    def _save(self, file, data):
-        path = os.path.join(self.checkout_path, file)
+    def _save(self, path, data):
         f = open(path, 'w')
         f.write(data)
         f.close()
-        self.wt.add(file)
 
     def checkout(self, revision=None):
         """ Checks out a project in a specific revision """
@@ -209,7 +208,7 @@ class ProjectVersioning(object):
             f.write(self.zipfile.read(name))
             f.close()   
 
-    def update(self, message):
+    def update(self):
         """ Updates the working tree """
 
         self.wt.update()
@@ -218,6 +217,7 @@ class ProjectVersioning(object):
         """ Checks in the project """
 
         self.wt.commit(message=message, authors=[session['username']])
+        self._save(os.path.join(self.branch_path, 'name'), self.project.projectname())
 
     def package(self):
         """ Package a project and return it to celtx """
@@ -233,11 +233,12 @@ class ProjectVersioning(object):
 
     def _addall(self, z, base_path, sub_path):
         for name in os.listdir(os.path.join(base_path, sub_path)):
-            path = os.path.join(base_path, sub_path, name)
+            name = os.path.join(sub_path, name)
+            path = os.path.join(base_path, name)
             if os.path.isdir(path):
-                self._addall(z, base_path, os.path.join(sub_path, path))
+                self._addall(z, base_path, name)
             else:
-                z.write(path, name)
+                z.write(path, name[2:])
 
     def last_revision_number(self):
         """ Returns the last revision number """
@@ -268,7 +269,7 @@ class ProjectVersioning(object):
         f = open(os.path.join(self.checkout_path, file))
         contents = f.read()
 
-        if self.project.fileinfo(file).doctype == cx["ScriptDocument"]:
+        if self.project.fileinfo(file).doctype == cx['ScriptDocument']:
             contents = contents.replace('chrome://celtx/content/', '/css/celtx/')
 
         f.close()
