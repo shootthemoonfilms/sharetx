@@ -19,7 +19,7 @@ from rdflib import Namespace, RDF
 from rdflib.Graph import Graph, Literal, URIRef
 
 from pylons import request, response, session, config, tmpl_context as c
-from pylons.controllers.util import abort, redirect_to
+from pylons.controllers.util import abort, redirect
 
 from sharetx.lib.base import BaseController, render, MicroMock, req, userdir
 
@@ -37,16 +37,6 @@ class ProjectController(BaseController):
         if 'project_file' in request.POST:
             uploaded_project = request.POST['project_file']
             self.zipfile = ZipFile(uploaded_project.file, 'r')
-
-    def __after__(self):
-        if self.zipfile:
-            self.zipfile.close()
-
-        if self.pv:
-            self.pv.cleanup()
-
-    #################################
-    # Work without an upload
 
     def revision(self, uri):
         return str(ProjectVersioning(uri).last_revision_number())
@@ -91,18 +81,6 @@ class ProjectController(BaseController):
 
         return pv.readfile(file)
 
-    def download(self, uri, revision, filename=None):
-        pv = ProjectVersioning(uri, revision)
-
-        if not filename:
-            return redirect_to("%s/%s.celtx" % (request.path, quote_plus(pv.project.projectname())))
-        else:
-            response.headers['content-type'] = 'application/zip'
-            return pv.package()
-
-    #################################
-    # Work with an upload
-
     def upload(self):
         if request.method != 'POST':
             return render('/dialogs/upload.mako')
@@ -116,12 +94,33 @@ class ProjectController(BaseController):
 
             return pv.uri
 
+    def download(self, uri, revision, filename=None):
+        pv = ProjectVersioning(uri, revision)
+
+        return self._download(pv, uri, revision, filename)
+
+    def _download(self, pv, uri, revision, filename=None):
+        if not filename:
+            name = pv.project.projectname()
+            return redirect("/project/%s/%s/download/%s.celtx" %
+                            (uri, revision, name), code=301)
+        else:
+            response.headers['content-type'] = 'application/zip'
+            return pv.package()
+
     def update(self):
         pv = ProjectVersioning(self.zipfile)
 
         pv.update()
 
-        return pv.package()
+        return self._download(pv, pv.uri, pv.last_revision_number())
+
+    def __after__(self):
+        if self.zipfile:
+            self.zipfile.close()
+
+        if self.pv:
+            self.pv.cleanup()
 
 
 ################################################################################
@@ -313,10 +312,10 @@ class CeltxRDFUtils:
         self.g.parse(source)
 
     def projectid(self):
-        return list(self.g.subjects(RDF.type, cx['Project']))[0]
+        return self.g.subjects(RDF.type, cx['Project']).next()
 
     def projectname(self):
-        return list(self.g.objects(self.projectid(), dc['title']))[0]
+        return self.g.objects(self.projectid(), dc['title']).next()
 
     def fileinfo(self, fileid):
         """ Returns an object with file information """

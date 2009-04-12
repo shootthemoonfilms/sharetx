@@ -493,17 +493,30 @@ body.index {
     background-image: url(../img/celtx-icon-16x16.png);
 }
 
+.icon.CatalogDocument {
+    background-image: url(../img/icons/default.png);
+}
+
 .icon.TextDocument {
     background-image: url(../img/icons/default.png);
 }
 
-.icon.CatalogDocument {
+.icon.AVDocument {
+    background-image: url(../img/icons/default.png);
+}
+
+.icon.ScriptDocument {
     background-image: url(../img/icons/default.png);
 }
 
 .icon.StoryboardDocument2 {
     background-image: url(../img/icons/default.png);
 }
+
+.icon.ScheduleDocument {
+    background-image: url(../img/icons/default.png);
+}
+
 
 /********************************************************
  *                        history
