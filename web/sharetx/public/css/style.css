@@ -268,26 +268,18 @@ body.index {
 }
 
 #left_sidebar ul {
+    list-style: none;
+    cursor: default;
     margin: 0;
     padding-left: 0;
 }
 
-#left_sidebar ul li ul {
-    padding-left: 0;
-}
-
-#left_sidebar ul li {
-    list-style: none;
-    cursor: default;
+#left_sidebar ul ul li {
     padding-left: 20px;
 }
 
-#left_sidebar ul li a {
-    background-image: url(../img/icons/default.png);
-}
-
-#left_sidebar ul li a.folder {
-    background-image: url(../img/icons/folder.png);
+#left_sidebar ul li ul {
+    padding-left: 0;
 }
 
 /********************************************************
@@ -485,12 +477,32 @@ body.index {
 .icon.smallest {
     display: block;
     background-image: url(../img/celtx-icon-16x16.png);
-    height: 15px;
+    background-position: 2px 2px;
     width: inherit;
-    padding-top: 3px;
+    padding-top: 5px;
     padding-left: 20px;
     min-height: 16px;
     min-width: 16px;
+}
+
+.icon.folder {
+    background-image: url(../img/icons/folder.png);
+}
+
+.icon.folder.Project {
+    background-image: url(../img/celtx-icon-16x16.png);
+}
+
+.icon.TextDocument {
+    background-image: url(../img/icons/default.png);
+}
+
+.icon.CatalogDocument {
+    background-image: url(../img/icons/default.png);
+}
+
+.icon.StoryboardDocument2 {
+    background-image: url(../img/icons/default.png);
 }
 
 /********************************************************

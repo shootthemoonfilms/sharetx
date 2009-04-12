@@ -9,6 +9,7 @@ import StringIO
 from datetime import datetime
 import uuid
 from urllib import quote_plus
+from string import rsplit
 
 from bzrlib.workingtree import WorkingTree
 from bzrlib.branch import Branch
@@ -81,6 +82,7 @@ class ProjectController(BaseController):
 
         c.revision = revision
         c.history = [self._rev_to_obj(rev, pv) for rev in pv.history()]
+        c.history.reverse()
 
         return render('/project/history.mako')
 
@@ -179,10 +181,11 @@ class ProjectVersioning(object):
         f.write(data)
         f.close()
 
-    def checkout(self, revision=None):
+    def checkout(self):
         """ Checks out a project in a specific revision """
 
-        self.branch.create_checkout(self.checkout_path, lightweight=True)
+        rev_id = self.revision and self.branch.get_rev_id(self.revision)
+        self.branch.create_checkout(self.checkout_path, lightweight=True, revision_id=rev_id)
         self.wt = WorkingTree.open(self.checkout_path)
 
     def extract(self):
@@ -201,6 +204,8 @@ class ProjectVersioning(object):
     def _extract(self):
         for name in self.zipfile.namelist():
             path = os.path.join(self.checkout_path, name)
+            if '/' in name and not os.path.exists(os.path.dirname(path)):
+                os.makedirs(os.path.dirname(path))
             f = open(path, 'w')
             f.write(self.zipfile.read(name))
             f.close()   
@@ -220,13 +225,13 @@ class ProjectVersioning(object):
         """ Package a project and return it to celtx """
 
         file = StringIO.StringIO()
-
         z = ZipFile(file, 'w')
         self._addall(z, self.checkout_path, '.')
         z.close()
+        contents = file.getvalue()
+        file.close()
 
-        # XXX possible memory leak!!! file not closed
-        return file.getvalue()
+        return contents
 
     def _addall(self, z, base_path, sub_path):
         for name in os.listdir(os.path.join(base_path, sub_path)):
@@ -266,7 +271,8 @@ class ProjectVersioning(object):
         f = open(os.path.join(self.checkout_path, file))
         contents = f.read()
 
-        if self.project.fileinfo(file).doctype == cx['ScriptDocument']:
+        fileid = self.project.fileid(file)
+        if self.project.fileinfo(fileid).doctype == cx['ScriptDocument']:
             contents = contents.replace('chrome://celtx/content/', '/css/celtx/')
 
         f.close()
@@ -315,18 +321,30 @@ class CeltxRDFUtils:
     def fileinfo(self, fileid):
         """ Returns an object with file information """
 
-        file = dict(self.g.predicate_objects(self.fileid(fileid)))
-
-        return MicroMock(title=file[dc['title']],
-                         localFile=file[cx['localFile']],
-                         doctype=file[cx['doctype']])
+        file = dict(self.g.predicate_objects(fileid))
+        title = dc['title'] in file and file[dc['title']] or ''
+        doctype = cx['doctype'] in file and rsplit(file[cx['doctype']], '/', 1)[1] or ''
+        if not doctype:
+            doctype = cx['projectRoot'] in file and 'Project' or ''
+        localfile = cx['localFile'] in file and file[cx['localFile']] or ''
+        return MicroMock(title=title, doctype=doctype, localfile=localfile)
 
     def filelist(self):
         """ Returns a list of files within a project """
 
-        # FIXME read project and contents from rdf don't just add all files
-        for pred in self.g.subject_objects(cx['localFile']):
-            yield self.fileinfo(pred[0])
+        base = self.g.seq(list(self.g.objects(self.projectid(), cx['components']))[0])
+        return list(self._filelist(base))
+
+
+    def _filelist(self, seq):
+        for pred in seq:
+            r = self.fileinfo(pred)
+
+            s = self.g.seq(pred)
+            if s:
+                r.filelist = list(self._filelist(s))
+
+            yield r
 
     def fileid(self, filename):
         """ Returns the id of a file """

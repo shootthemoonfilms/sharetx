@@ -16,8 +16,8 @@ var Tabs = {
         var tab = new Element("div", { "id": "tab_" + name }).update(title);
         var close = new Element("a", { href: "#", onclick: "return false;" }).update("x");
 
-        Event.observe(tab, "click", function() { Tabs.show(name); });
-        Event.observe(close, "click", function() { Tabs.close(name); });
+        Event.observe(tab, "click", function(e) { Tabs.show(name); });
+        Event.observe(close, "click", function(e) { Tabs.close(name); Event.stop(e); });
         tab.appendChild(close);
 
         $("center_tabs").appendChild(tab);
@@ -77,7 +77,7 @@ var Tabs = {
     close: function(name) {
         $("tab_" + name).remove();
         $("tab_content_" + name).remove();
-        if (name == Tabs.currentTab) {
+        if (name == Tabs.currentTab && name != Tabs.previousTab) {
             if (!Tabs.show(Tabs.previousTab) && $("center_tabs").firstElementChild) {
                 Tabs.show($("center_tabs").firstElementChild.id.replace("tab_", ""));
             }
