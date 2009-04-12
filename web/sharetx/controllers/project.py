@@ -62,19 +62,25 @@ class ProjectController(BaseController):
         rev = pv.last_revision()
 
         c.name = pv.project.projectname()
-        # FIXME timezone
-        c.last_modified = datetime.fromtimestamp(rev.timestamp).replace(microsecond=0)
-        c.last_author = ', '.join(rev.get_apparent_authors())
-        c.last_message = rev.message
-        c.last_revision = '.'.join(str(i) for i in pv.branch.revision_id_to_dotted_revno(rev.revision_id))
         c.revision = revision
+        c.last_rev = self._rev_to_obj(rev, pv)
 
         return render('/project/info.mako')
+
+    def _rev_to_obj(self, rev, pv):
+        # FIXME timezone
+        modified = datetime.fromtimestamp(rev.timestamp).replace(microsecond=0)
+        author = ', '.join(rev.get_apparent_authors())
+        revision = '.'.join(str(i) for i in pv.branch.revision_id_to_dotted_revno(rev.revision_id))
+
+        return MicroMock(modified=modified, author=author, message=rev.message,
+                         revision=revision)
 
     def history(self, uri, revision):
         pv = ProjectVersioning(uri, revision)
 
-        # TODO populate history
+        c.revision = revision
+        c.history = [self._rev_to_obj(rev, pv) for rev in pv.history()]
 
         return render('/project/history.mako')
 
@@ -83,10 +89,10 @@ class ProjectController(BaseController):
 
         return pv.readfile(file)
 
-    def download(self, uri, revision, url=None):
+    def download(self, uri, revision, filename=None):
         pv = ProjectVersioning(uri, revision)
 
-        if not url:
+        if not filename:
             return redirect_to("%s/%s.celtx" % (request.path, quote_plus(pv.project.projectname())))
         else:
             response.headers['content-type'] = 'application/zip'
@@ -114,15 +120,6 @@ class ProjectController(BaseController):
         pv.update()
 
         return pv.package()
-
-    #################################
-    # Share
-
-    def share(self, name, revision, subaction):
-        return getattr(self, 'share_%s' % subaction)(name, revision)
-
-    def share_overview(self, name, revision):
-        return render('/project/share.mako')
 
 
 ################################################################################
@@ -275,6 +272,12 @@ class ProjectVersioning(object):
         f.close()
 
         return contents
+
+    def history(self):
+        """ Returns the history """
+
+        return [ self.branch.repository.get_revision(revision_id)
+                for revision_id in self.branch.revision_history() ]
 
     def cleanup(self):
         """ Deletes the checkout """

@@ -7,7 +7,7 @@ include("sharetx.project");
 var Toolbar = {
     init: function() {
         $$("#toolbar button").each(function(e) {
-            if (["open", "upload", "update", "preferences", "logout"].indexOf(e.id) == -1) {
+            if (["open", "upload", "update", "preferences", "help", "logout"].indexOf(e.id) == -1) {
                 e.setAttribute("disabled", "disabled");
             } else {
                 e.disabled = false;
@@ -36,30 +36,20 @@ var Toolbar = {
             }).setAjaxContent("/project/upload", { method: "get" }, true, true);
         });
 
-        Event.observe("update", "click", function() {
-            new Window({
-                className: "mac_os_x",
-                title: "Update project",
-                width: 400,
-                height: 130,
-                destroyOnClose: true,
-                resizable: false,
-                maximizable: false,
-                minimizable: false
-            }).setAjaxContent("/project/update", { method: "get" }, true, true);
-        });
-
         Event.observe("download", "click", function() {
             $("download_iframe").src = Project.requestPath("download");
         });
-    
-    
+
         Event.observe("history", "click", function() {
             Tabs.open("history", "History", Project.requestPath("history"));
         });
 
         Event.observe("share", "click", function() {
             Tabs.open("share", "Share", Project.requestPath("share/overview"));
+        });
+
+        Event.observe("refresh", "click", function() {
+            Project.refresh();
         });
 
         Event.observe("preferences", "click", function() {

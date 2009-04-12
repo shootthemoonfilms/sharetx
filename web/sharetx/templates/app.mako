@@ -12,15 +12,16 @@
 <body>
     <div id="toolbar">
         <a href="/"><img src="/logo.png" /></a>
-        <button id="open" title="Open existing project"><img src="/img/toolbar/open.png" /><div>Projects</div></button>
+        <button id="open" title="Open existing project"><img src="/img/toolbar/open.png" /><div>Open</div></button>
         <button id="upload" title="Upload a project"><img src="/img/toolbar/upload.png" /><div>Upload</div></button>
-        <button id="update" title="Update current project"><img src="/img/toolbar/update.png" /><div>Update</div></button>
         <div class="separator"></div>
         <button id="download" title="Download current project"><img src="/img/toolbar/download.png" /><div>Download</div></button>
         <button id="history" title="See current project's history"><img src="/img/toolbar/history.png" /><div>History</div></button>
         <button id="share" title="Share current project"><img src="/img/toolbar/share.png" /><div>Share</div></button>
+        <button id="refresh" title="Refresh"><img src="/img/toolbar/refresh.png" /><div>Refresh</div></button>
         <div class="separator"></div>
         <button id="preferences" title="Edit preferences"><img src="/img/toolbar/preferences.png" /><div>Preferences</div></button>
+        <button id="help" title="Help!"><img src="/img/toolbar/help.png" /><div>Help</div></button>
         <div class="separator"></div>
         <button id="logout" title="Close current session"><img src="/img/toolbar/logout.png" /><div>Logout</div></button>
     </div>
