@@ -15,6 +15,12 @@ setup(
     install_requires=[
         "Pylons>=0.9.7",
         "SQLAlchemy>=0.5",
+        "gp.fileupload",
+        "pysqlite",
+        "pyrex",
+        "bzr",
+        "rdflib",
+        "uuid"
     ],
     setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),

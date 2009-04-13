@@ -1,22 +1,13 @@
 import logging
 
 import os, os.path
-import subprocess
-import shutil
 from zipfile import ZipFile, is_zipfile
 from tempfile import mkdtemp
-import StringIO
 from datetime import datetime
-import uuid
-from urllib import quote_plus
-from string import rsplit
 
 from bzrlib.workingtree import WorkingTree
 from bzrlib.branch import Branch
 from bzrlib.bzrdir import BzrDir
-
-from rdflib import Namespace, RDF
-from rdflib.Graph import Graph, Literal, URIRef
 
 from pylons import request, response, session, config, tmpl_context as c
 from pylons.controllers.util import abort, redirect
@@ -105,7 +96,7 @@ class ProjectController(BaseController):
             return redirect("/project/%s/%s/download/%s.celtx" %
                             (uri, revision, name), code=301)
         else:
-            response.headers['content-type'] = 'application/zip'
+            response.headers['content-type'] = 'application/x-celtx'
             return pv.package()
 
     def update(self):
@@ -127,6 +118,9 @@ class ProjectController(BaseController):
 ################################################################################
 ################################################################################
 ################################################################################
+
+import uuid
+import shutil
 
 
 class ProjectVersioning(object):
@@ -217,6 +211,7 @@ class ProjectVersioning(object):
     def checkin(self, message):
         """ Checks in the project """
 
+        #self.project.save(self.checkout_path)
         self.wt.commit(message=message, authors=[session['username']])
         self._save(os.path.join(self.branch_path, 'name'), self.project.projectname())
 
@@ -271,7 +266,7 @@ class ProjectVersioning(object):
         contents = f.read()
 
         fileid = self.project.fileid(file)
-        if self.project.fileinfo(fileid).doctype == cx['ScriptDocument']:
+        if self.project.fileinfo(fileid).doctype == CX['ScriptDocument']:
             contents = contents.replace('chrome://celtx/content/', '/css/celtx/')
 
         f.close()
@@ -295,10 +290,18 @@ class ProjectVersioning(object):
 ################################################################################
 ################################################################################
 
+import os.path
+from string import rsplit
+import StringIO
+from zipfile import ZipFile
 
-dc = Namespace('http://purl.org/dc/elements/1.1/')
-cx = Namespace('http://celtx.com/NS/v1/')
-sx = Namespace('http://sharetx.com/NS/v1/')
+from rdflib import Namespace, RDF
+from rdflib.Graph import Graph, Literal, URIRef
+
+
+DC = Namespace('http://purl.org/dc/elements/1.1/')
+CX = Namespace('http://celtx.com/NS/v1/')
+SX = Namespace('http://sharetx.com/NS/v1/')
 
 class CeltxRDFUtils:
 
@@ -312,26 +315,26 @@ class CeltxRDFUtils:
         self.g.parse(source)
 
     def projectid(self):
-        return self.g.subjects(RDF.type, cx['Project']).next()
+        return self.g.subjects(RDF.type, CX.Project).next()
 
     def projectname(self):
-        return self.g.objects(self.projectid(), dc['title']).next()
+        return self.g.objects(self.projectid(), DC['title']).next()
 
     def fileinfo(self, fileid):
         """ Returns an object with file information """
 
         file = dict(self.g.predicate_objects(fileid))
-        title = dc['title'] in file and file[dc['title']] or ''
-        doctype = cx['doctype'] in file and rsplit(file[cx['doctype']], '/', 1)[1] or ''
+        title = DC['title'] in file and file[DC['title']] or ''
+        doctype = CX.doctype in file and rsplit(file[CX.doctype], '/', 1)[1] or ''
         if not doctype:
-            doctype = cx['projectRoot'] in file and 'Project' or ''
-        localfile = cx['localFile'] in file and file[cx['localFile']] or ''
+            doctype = CX.projectRoot in file and 'Project' or ''
+        localfile = CX.localFile in file and file[CX.localFile] or ''
         return MicroMock(title=title, doctype=doctype, localfile=localfile)
 
     def filelist(self):
         """ Returns a list of files within a project """
 
-        base = self.g.seq(list(self.g.objects(self.projectid(), cx['components']))[0])
+        base = self.g.seq(list(self.g.objects(self.projectid(), CX.components))[0])
         return list(self._filelist(base))
 
 
@@ -351,4 +354,14 @@ class CeltxRDFUtils:
         if isinstance(filename, URIRef):
             return filename
         else:
-            return list(self.g.subjects(cx['localFile'], Literal(filename)))[0]
+            return list(self.g.subjects(CX.localFile, Literal(filename)))[0]
+
+    def save(self, source):
+        """ Saves the project to a file """
+
+        if isinstance(source, basestring) and os.path.isdir(source):
+            source = os.path.join(source, 'project.rdf')
+
+        self.g.bind("RDF", RDF)
+        self.g.bind("sx", SX)
+        self.g.serialize(source, format='pretty-xml')
