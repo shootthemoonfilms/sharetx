@@ -83,7 +83,7 @@ class ProjectController(BaseController):
 
             pv.checkin(req('m', 'Upload Project'))
 
-            return pv.uri
+            return pv.config.get('sharetx', 'uri')
 
     def download(self, uri, revision, filename=None):
         pv = ProjectVersioning(uri, revision)
@@ -104,7 +104,8 @@ class ProjectController(BaseController):
 
         pv.update()
 
-        return self._download(pv, pv.uri, pv.last_revision_number())
+        return self._download(pv, pv.config.get('sharetx', 'uri'),
+                              pv.last_revision_number())
 
     def __after__(self):
         if self.zipfile:
@@ -121,6 +122,8 @@ class ProjectController(BaseController):
 
 import uuid
 import shutil
+from ConfigParser import SafeConfigParser
+import StringIO
 
 
 class ProjectVersioning(object):
@@ -128,25 +131,29 @@ class ProjectVersioning(object):
     def __init__(self, source, revision=None):
         self.revision = revision and int(revision)
         self.project = None
-        self.uri = None
         self.new = False
         self.zipfile = None
+        self.config = None
 
         if isinstance(source, basestring):
-            self.uri = source
+            self.config = self._newconf(source)
         elif isinstance(source, ZipFile):
             self.zipfile = source
             try:
-                self.uri = self.zipfile.read('uri')
+                conf = StringIO.StringIO(self.zipfile.read('sharetx.conf'))
+                self.config = SafeConfigParser()
+                self.config.readfp(conf)
+                conf.close()
             except KeyError:
-                self.uri = str(uuid.uuid1())
+                self.config = self._newconf(str(uuid.uuid1()))
                 self.new = True
 
-        if not self.uri:
-            raise 'URI not found', source
+        if not self.config:
+            raise 'Configuration not found', source
 
         self.checkout_path = mkdtemp()
-        self.branch_path = os.path.join(userdir(session['username']), self.uri)
+        self.branch_path = os.path.join(userdir(session['username']),
+                                        self.config.get('sharetx', 'uri'))
 
         if self.new:
             if os.path.exists(self.branch_path):
@@ -160,14 +167,32 @@ class ProjectVersioning(object):
         if self.new:
             self.checkout()
             self.extract()
-            self._save(os.path.join(self.checkout_path, 'uri'), self.uri)
-            self.wt.add('uri')
+            conf = open(os.path.join(self.checkout_path, 'sharetx.conf'), 'wb')
+            self.config.write(conf)
+            conf.close()
+            self.wt.add('sharetx.conf')
         elif self.zipfile:
             self.extract()
         else:
             self.checkout()
 
-        self.project = CeltxRDFUtils(self.checkout_path)
+        self.project = CeltxRDFProject(self.checkout_path)
+
+        # Re-read configuration and check version
+        conf = os.path.join(self.checkout_path, 'sharetx.conf')
+        self.config = SafeConfigParser()
+        self.config.read(conf)
+        version = self.config.get('sharetx', 'version')
+        if version != '1':
+            raise 'Not a valid version: %s' % version
+
+    def _newconf(self, uri):
+        conf = SafeConfigParser()
+        conf.add_section('sharetx')
+        conf.set('sharetx', 'version', '1')
+        conf.set('sharetx', 'uri', uri)
+
+        return conf
 
     def _save(self, path, data):
         f = open(path, 'w')
@@ -187,11 +212,11 @@ class ProjectVersioning(object):
         self._extract(self.zipfile)
 
         if not self.new:
-            bzr = os.path.join(self.checkout_path, 'bzr')
+            bzr = os.path.join(self.checkout_path, 'sharetx.bzr')
             bzrzip = ZipFile(bzr)
-            self._extract(bzrzip, '.bzr')
+            self._extract(bzrzip)
             bzrzip.close()
-            os.delete(bzr)
+            os.remove(bzr)
 
             self.wt = WorkingTree.open(self.checkout_path)
 
@@ -201,9 +226,6 @@ class ProjectVersioning(object):
 
     def _extract(self, z, subdir='.'):
         where = os.path.join(self.checkout_path, subdir)
-        if subdir != '.' and not os.path.exists(where):
-            os.makedirs(where)
-
         for name in z.namelist():
             path = os.path.join(where, name)
             if '/' in name and not os.path.exists(os.path.dirname(path)):
@@ -215,7 +237,7 @@ class ProjectVersioning(object):
     def package(self):
         """ Package a project and return it to celtx """
 
-        z = ZipFile(os.path.join(self.checkout_path, 'bzr'), 'w')
+        z = ZipFile(os.path.join(self.checkout_path, 'sharetx.bzr'), 'w')
         self._addall(z, self.checkout_path, './.bzr')
         z.close()
 
@@ -317,7 +339,7 @@ DC = Namespace('http://purl.org/dc/elements/1.1/')
 CX = Namespace('http://celtx.com/NS/v1/')
 SX = Namespace('http://sharetx.com/NS/v1/')
 
-class CeltxRDFUtils:
+class CeltxRDFProject:
 
     def __init__(self, source):
         if isinstance(source, ZipFile):

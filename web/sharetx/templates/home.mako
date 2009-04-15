@@ -13,7 +13,7 @@
         <a href="/"><img src="/logo.png" /></a>
     </div>
 
-    <div>Share your <a href="http://www.celtx.com" target="_blank">celtx</a> scripts for free!</div>
+    <div>Backup and share your <a href="http://www.celtx.com" target="_blank">celtx</a> scripts for free!</div>
 
     <div id="access">
         <ul id="tabs">
