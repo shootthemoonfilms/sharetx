@@ -18,6 +18,8 @@ port = 5000
 use = egg:sharetx
 full_stack = true
 static_files = true
+# Set this to true to enable users to create accounts
+enable_new_users = false
 
 cache_dir = %(here)s/data
 beaker.session.key = sharetx

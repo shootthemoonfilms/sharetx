@@ -45,6 +45,8 @@
             <button type="submit" name="action" id="reset" value="reset">Reset Password</button>
         </form>
     </div>
+
+    <div>Visit the <a href="http://sharetx.googlecode.com" target="_blank">development page at google code</a>.</div>
 </body>
 
 </html>

@@ -55,6 +55,9 @@ class UserController(BaseController):
         return self._message('Incorrect username or password', 'error')
 
     def _create(self):
+        if config["app_conf"]["enable_new_users"] != "true":
+            return self._message('User creation not enabled', 'error')
+
         if not req('username'):
             return self._message('Username missing', 'error')
         elif not req('password'):
@@ -95,7 +98,7 @@ class UserController(BaseController):
 
     def app(self):
         if not 'username' in session:
-            raise 'FIXME: no username'
+            abort(403, 'User not logged in')
 
         return render('/app.mako')
 

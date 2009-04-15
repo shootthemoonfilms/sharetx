@@ -23,7 +23,7 @@ class ProjectController(BaseController):
         self.pv = None
 
         if not 'username' in session:
-            raise 'FIXME: no username'
+            abort(403, 'User not logged in')
 
         if 'project_file' in request.POST:
             uploaded_project = request.POST['project_file']
@@ -184,39 +184,40 @@ class ProjectVersioning(object):
     def extract(self):
         """ Extracts a project """
 
-        if self.new:
-            self._extract()
-        else:
-            self._extract()
+        self._extract(self.zipfile)
+
+        if not self.new:
+            bzr = os.path.join(self.checkout_path, 'bzr')
+            bzrzip = ZipFile(bzr)
+            self._extract(bzrzip, '.bzr')
+            bzrzip.close()
+            os.delete(bzr)
+
             self.wt = WorkingTree.open(self.checkout_path)
 
         for name in os.listdir(self.checkout_path):
             if name != '.bzr':
                 self.wt.add(name)
 
-    def _extract(self):
-        for name in self.zipfile.namelist():
-            path = os.path.join(self.checkout_path, name)
+    def _extract(self, z, subdir='.'):
+        where = os.path.join(self.checkout_path, subdir)
+        if subdir != '.' and not os.path.exists(where):
+            os.makedirs(where)
+
+        for name in z.namelist():
+            path = os.path.join(where, name)
             if '/' in name and not os.path.exists(os.path.dirname(path)):
                 os.makedirs(os.path.dirname(path))
             f = open(path, 'w')
-            f.write(self.zipfile.read(name))
+            f.write(z.read(name))
             f.close()   
-
-    def update(self):
-        """ Updates the working tree """
-
-        self.wt.update()
-
-    def checkin(self, message):
-        """ Checks in the project """
-
-        #self.project.save(self.checkout_path)
-        self.wt.commit(message=message, authors=[session['username']])
-        self._save(os.path.join(self.branch_path, 'name'), self.project.projectname())
 
     def package(self):
         """ Package a project and return it to celtx """
+
+        z = ZipFile(os.path.join(self.checkout_path, 'bzr'), 'w')
+        self._addall(z, self.checkout_path, './.bzr')
+        z.close()
 
         file = StringIO.StringIO()
         z = ZipFile(file, 'w')
@@ -232,9 +233,22 @@ class ProjectVersioning(object):
             name = os.path.join(sub_path, name)
             path = os.path.join(base_path, name)
             if os.path.isdir(path):
-                self._addall(z, base_path, name)
+                if name != './.bzr':
+                    self._addall(z, base_path, name)
             else:
                 z.write(path, name[2:])
+
+    def update(self):
+        """ Updates the working tree """
+
+        self.wt.update()
+
+    def checkin(self, message):
+        """ Checks in the project """
+
+        #self.project.save(self.checkout_path)
+        self.wt.commit(message=message, authors=[session['username']])
+        self._save(os.path.join(self.branch_path, 'name'), self.project.projectname())
 
     def last_revision_number(self):
         """ Returns the last revision number """
