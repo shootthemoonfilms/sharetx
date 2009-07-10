@@ -435,10 +435,11 @@ body.index {
     border-radius: 5px;
     text-decoration: none;
     vertical-align: top;
+    color: black;
 }
 
 .icon:hover {
-    background-color: #eeeeee;
+    x-background-color: #eeeeee;
     color: black;
 }
 
@@ -448,7 +449,7 @@ body.index {
 }
 
 .icon:focus:hover {
-    background-color: #aaddff;
+    x-background-color: #aaddff;
 }
 
 .icon.large {
@@ -483,6 +484,9 @@ body.index {
     padding-left: 20px;
     min-height: 16px;
     min-width: 16px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
 }
 
 .icon.folder {

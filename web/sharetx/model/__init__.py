@@ -21,9 +21,9 @@ class User(_Base):
     __tablename__ = "users"
 
     id = sa.Column(sa.types.Integer, primary_key=True)
-    username = sa.Column(sa.types.String)
-    password = sa.Column(sa.types.String)
-    email = sa.Column(sa.types.String)
+    username = sa.Column(sa.types.Unicode)
+    password = sa.Column(sa.types.Unicode)
+    email = sa.Column(sa.types.Unicode)
 
     def enc(self, password):
-        return hmac.new(self.username, password).hexdigest()
+        return hmac.new(str(self.username), password).hexdigest()

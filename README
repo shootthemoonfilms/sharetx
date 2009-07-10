@@ -1,0 +1,10 @@
+How to patch celtx to be able to use this server.
+
+1. Follow the instructions in this url:
+
+http://forums.celtx.com/viewtopic.php?t=618
+
+2. Apply the patch shartx.patch to the celtx/chrome directory or add the following line to celtx.js file
+
+TODO: post patch
+

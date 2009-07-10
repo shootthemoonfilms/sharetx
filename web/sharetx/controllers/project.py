@@ -269,7 +269,7 @@ class ProjectVersioning(object):
         """ Checks in the project """
 
         #self.project.save(self.checkout_path)
-        self.wt.commit(message=message, authors=[session['username']])
+        self.wt.commit(message=message, authors=[ session['username'] ])
         self._save(os.path.join(self.branch_path, 'name'), self.project.projectname())
 
     def last_revision_number(self):
@@ -302,7 +302,7 @@ class ProjectVersioning(object):
         contents = f.read()
 
         fileid = self.project.fileid(file)
-        if self.project.fileinfo(fileid).doctype == CX['ScriptDocument']:
+        if self.project.fileinfo(fileid).doctype == 'ScriptDocument':
             contents = contents.replace('chrome://celtx/content/', '/css/celtx/')
 
         f.close()

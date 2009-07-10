@@ -3,7 +3,6 @@ import logging
 import os, os.path
 from urllib import unquote_plus
 import random
-import hmac
 
 from pylons import request, response, session, config, tmpl_context as c
 from pylons.controllers.util import abort, redirect_to, redirect
