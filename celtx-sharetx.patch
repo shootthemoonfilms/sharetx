@@ -1,0 +1,10 @@
+--- celtx.js.original	2009-08-02 18:05:12.000000000 -0500
++++ celtx.js	2009-04-15 09:14:22.000000000 -0500
+@@ -3836,6 +3836,7 @@
+     // Ignore our own special files
+     if (entry.leafName == "project.rdf" ||
+         entry.leafName == "local.rdf" ||
++        entry.leafName.match(/^sharetx./) ||
+         entry.leafName.match(/\.celtx$/))
+       continue;
+ 
